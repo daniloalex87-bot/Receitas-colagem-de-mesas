@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestão de Modelos & Receitas de Processo (CLP + Cola)</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <script src="[https://unpkg.com/lucide@latest](https://unpkg.com/lucide@latest)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap)" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         .font-mono-tech { font-family: 'JetBrains Mono', monospace; }
@@ -14,123 +14,144 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { opacity: 1; }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.35); }
+            50% { box-shadow: 0 0 0 6px rgba(34, 211, 238, 0); }
+        }
+        .pulse-cyan { animation: pulseGlow 2.4s infinite; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="bg-gradient-to-br from-slate-100 via-indigo-50/40 to-cyan-50/50 text-slate-800 antialiased min-h-screen flex flex-col">
 
     <!-- ========================================== -->
-    <!-- CABEÇALHO INDUSTRIAL & NAVEGAÇÃO PRINCIPAL -->
+    <!-- CABEÇALHO VIBRANTE & NAVEGAÇÃO PRINCIPAL   -->
     <!-- ========================================== -->
-    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
+    <header class="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 text-white border-b border-indigo-500/30 sticky top-0 z-30 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between py-3.5 gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="p-2.5 bg-cyan-500/15 border border-cyan-500/30 rounded-xl text-cyan-400 shrink-0">
-                        <i data-lucide="cpu" class="w-6 h-6"></i>
+                    <div class="p-2.5 bg-gradient-to-br from-cyan-400 to-indigo-500 rounded-2xl text-slate-950 shadow-md pulse-cyan shrink-0">
+                        <i data-lucide="cpu" class="w-6 h-6 stroke-[2.4]"></i>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white">
-                                Gestão de Modelos & Receitas de Processo (CLP + Cola)
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 class="text-base sm:text-lg font-black tracking-tight bg-gradient-to-r from-white via-cyan-100 to-indigo-200 bg-clip-text text-transparent">
+                                Gestão de Modelos & Receitas (CLP + Cola)
                             </h1>
-                            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono-tech font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                                CHÃO DE FÁBRICA v2.0
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono-tech font-bold bg-cyan-400/20 text-cyan-300 border border-cyan-400/40">
+                                LINHA INTERATIVA v3.0
                             </span>
                         </div>
-                        <p class="text-xs text-slate-400">Controle de engenharia: Vínculo Modelos CLP × Receitas CLP (01–50) × Dosagem de Cola (01–20)</p>
+                        <p class="text-xs text-indigo-200/80">Modelos CLP × 50 Receitas CLP × 20 Receitas Cola (Antes vs. Atual + Histórico)</p>
                     </div>
                 </div>
 
-                <!-- Ações Globais de Backup / Reset -->
-                <div class="flex items-center gap-2 self-start md:self-auto">
-                    <label title="Importar Backup JSON" class="cursor-pointer flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-700 transition">
-                        <i data-lucide="upload" class="w-3.5 h-3.5 text-cyan-400"></i>
-                        <span>Importar JSON</span>
+                <!-- Ações Globais -->
+                <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
+                    <label title="Importar Backup JSON" class="cursor-pointer flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-2 rounded-xl border border-white/15 transition backdrop-blur-xs">
+                        <i data-lucide="upload" class="w-3.5 h-3.5 text-cyan-300"></i>
+                        <span>Importar</span>
                         <input type="file" id="importJsonInput" accept=".json" onchange="importJSONBackup(event)" class="hidden">
                     </label>
                     <button onclick="exportJSONBackup()" title="Exportar Backup Completo JSON"
-                        class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-700 transition">
-                        <i data-lucide="database" class="w-3.5 h-3.5 text-cyan-400"></i>
-                        <span class="hidden sm:inline">Backup JSON</span>
+                        class="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-2 rounded-xl border border-white/15 transition backdrop-blur-xs">
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-amber-300"></i>
+                        <span>Backup JSON</span>
                     </button>
                     <button onclick="openResetModal()" title="Restaurar Padrão ou Limpar"
-                        class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition">
+                        class="p-2 bg-white/10 hover:bg-rose-500/30 text-indigo-200 hover:text-white rounded-xl border border-white/15 transition">
                         <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
 
+            <!-- Barra de Progresso Geral de Validação -->
+            <div class="pb-2.5">
+                <div class="flex items-center justify-between text-[10px] font-mono-tech text-indigo-200 mb-1">
+                    <span>PROGRESSO DE HOMOLOGAÇÃO DA LINHA</span>
+                    <span id="headerProgressLabel" class="font-bold text-cyan-300">0% VALIDADO</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-800/90 rounded-full overflow-hidden">
+                    <div id="headerProgressBar" class="h-full bg-gradient-to-r from-cyan-400 via-emerald-400 to-teal-300 transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
             <!-- Abas Principais -->
-            <nav class="flex space-x-1.5 overflow-x-auto pb-2.5 pt-1 no-scrollbar" id="mainNavTabs">
+            <nav class="flex space-x-1.5 overflow-x-auto pb-3 pt-0.5 no-scrollbar" id="mainNavTabs">
                 <button onclick="switchTab('matrix')" data-tab="matrix"
-                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap bg-cyan-500 text-slate-950 shadow-sm">
+                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-extrabold rounded-xl transition whitespace-nowrap bg-gradient-to-r from-cyan-400 to-teal-300 text-slate-950 shadow-md">
                     <i data-lucide="table-2" class="w-4 h-4"></i>
                     Matriz de Modelos (CLP x Cola)
                 </button>
+                <button onclick="switchTab('simulator')" data-tab="simulator"
+                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-indigo-100 hover:bg-white/10">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-fuchsia-400"></i>
+                    Simulador & Comparador Visual
+                </button>
                 <button onclick="switchTab('glue')" data-tab="glue"
-                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-slate-300 hover:bg-slate-800 hover:text-white">
+                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-indigo-100 hover:bg-white/10">
                     <i data-lucide="droplet" class="w-4 h-4 text-amber-400"></i>
-                    Parâmetros das Receitas de Cola (20 Receitas)
+                    20 Receitas de Cola (Antes/Atual)
                 </button>
                 <button onclick="switchTab('clp')" data-tab="clp"
-                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-slate-300 hover:bg-slate-800 hover:text-white">
+                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-indigo-100 hover:bg-white/10">
                     <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i>
-                    Catálogo de Receitas CLP (50 Receitas)
+                    50 Receitas CLP
                 </button>
             </nav>
         </div>
     </header>
 
     <!-- ========================================== -->
-    <!-- PAINEL DE KPIs COMPACTOS                   -->
+    <!-- PAINEL DE KPIs COLORIDOS E INTERATIVOS     -->
     <!-- ========================================== -->
     <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <!-- KPI 1: Total de Modelos -->
-            <div onclick="switchTab('matrix')" class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200/90 hover:border-cyan-400 transition cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total de Modelos</span>
-                    <i data-lucide="layers" class="w-4 h-4 text-cyan-600"></i>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <!-- KPI 1 -->
+            <div onclick="switchTab('matrix')" class="bg-gradient-to-br from-cyan-600 to-blue-700 text-white p-4 rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition cursor-pointer relative overflow-hidden">
+                <div class="flex items-center justify-between relative z-10">
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-cyan-100">Total de Modelos</span>
+                    <div class="p-1.5 bg-white/15 rounded-lg"><i data-lucide="layers" class="w-4 h-4 text-white"></i></div>
                 </div>
-                <div class="flex items-baseline justify-between mt-1.5">
-                    <span id="kpiTotalModels" class="text-2xl font-extrabold text-slate-900 font-mono-tech">0</span>
-                    <span id="kpiModelsMultiSub" class="text-[11px] font-medium text-slate-500">0 receitas ativas</span>
-                </div>
-            </div>
-
-            <!-- KPI 2: Modelos Validados (%) -->
-            <div onclick="setStatusFilterAndGo('VALIDATED')" class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200/90 hover:border-emerald-400 transition cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Modelos Validados</span>
-                    <span id="kpiValidatedPctBadge" class="text-[10px] font-mono-tech font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">0%</span>
-                </div>
-                <div class="flex items-baseline justify-between mt-1.5">
-                    <span id="kpiValidatedCount" class="text-2xl font-extrabold text-emerald-600 font-mono-tech">0 / 0</span>
-                    <span id="kpiPendingCount" class="text-[11px] font-semibold text-amber-600">0 pendentes</span>
+                <div class="flex items-baseline justify-between mt-2 relative z-10">
+                    <span id="kpiTotalModels" class="text-2xl sm:text-3xl font-black font-mono-tech">0</span>
+                    <span id="kpiModelsMultiSub" class="text-[11px] font-semibold bg-white/15 px-2 py-0.5 rounded-full">0 CLPs</span>
                 </div>
             </div>
 
-            <!-- KPI 3: Receitas de CLP (1 a 50) -->
-            <div onclick="switchTab('clp')" class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200/90 hover:border-cyan-400 transition cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Receitas CLP (01–50)</span>
-                    <i data-lucide="cpu" class="w-4 h-4 text-slate-600"></i>
+            <!-- KPI 2 -->
+            <div onclick="setStatusFilterAndGo('VALIDATED')" class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-4 rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition cursor-pointer relative overflow-hidden">
+                <div class="flex items-center justify-between relative z-10">
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-100">Modelos Validados</span>
+                    <span id="kpiValidatedPctBadge" class="text-[11px] font-mono-tech font-black px-2 py-0.5 rounded-full bg-white text-emerald-800 shadow-xs">0%</span>
                 </div>
-                <div class="flex items-baseline justify-between mt-1.5">
-                    <span id="kpiClpConfigured" class="text-2xl font-extrabold text-slate-900 font-mono-tech">0 / 50</span>
-                    <span class="text-[11px] text-slate-500">configuradas</span>
+                <div class="flex items-baseline justify-between mt-2 relative z-10">
+                    <span id="kpiValidatedCount" class="text-2xl sm:text-3xl font-black font-mono-tech">0 / 0</span>
+                    <span id="kpiPendingCount" class="text-[11px] font-bold bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">0 pend.</span>
                 </div>
             </div>
 
-            <!-- KPI 4: Receitas de Cola (1 a 20) -->
-            <div onclick="switchTab('glue')" class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200/90 hover:border-amber-400 transition cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Receitas Cola (01–20)</span>
-                    <i data-lucide="droplet" class="w-4 h-4 text-amber-500"></i>
+            <!-- KPI 3 -->
+            <div onclick="switchTab('clp')" class="bg-gradient-to-br from-indigo-600 to-violet-700 text-white p-4 rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition cursor-pointer relative overflow-hidden">
+                <div class="flex items-center justify-between relative z-10">
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-100">Receitas CLP (01–50)</span>
+                    <div class="p-1.5 bg-white/15 rounded-lg"><i data-lucide="cpu" class="w-4 h-4 text-white"></i></div>
                 </div>
-                <div class="flex items-baseline justify-between mt-1.5">
-                    <span id="kpiGlueConfigured" class="text-2xl font-extrabold text-slate-900 font-mono-tech">0 / 20</span>
-                    <span id="kpiGlueChangedBadge" class="text-[11px] font-semibold text-amber-600">0 alteradas</span>
+                <div class="flex items-baseline justify-between mt-2 relative z-10">
+                    <span id="kpiClpConfigured" class="text-2xl sm:text-3xl font-black font-mono-tech">0 / 50</span>
+                    <span class="text-[11px] font-semibold text-indigo-100">programas</span>
+                </div>
+            </div>
+
+            <!-- KPI 4 -->
+            <div onclick="switchTab('glue')" class="bg-gradient-to-br from-amber-500 to-orange-600 text-white p-4 rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition cursor-pointer relative overflow-hidden">
+                <div class="flex items-center justify-between relative z-10">
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-100">Receitas Cola (01–20)</span>
+                    <div class="p-1.5 bg-white/15 rounded-lg"><i data-lucide="droplet" class="w-4 h-4 text-white"></i></div>
+                </div>
+                <div class="flex items-baseline justify-between mt-2 relative z-10">
+                    <span id="kpiGlueConfigured" class="text-2xl sm:text-3xl font-black font-mono-tech">0 / 20</span>
+                    <span id="kpiGlueChangedBadge" class="text-[11px] font-bold bg-slate-950/30 px-2 py-0.5 rounded-full">0 alteradas</span>
                 </div>
             </div>
         </div>
@@ -143,9 +164,9 @@
 
         <!-- Toast de Feedback -->
         <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-            <div class="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-3">
+            <div class="bg-slate-950 text-white px-4 py-3 rounded-2xl shadow-2xl border border-cyan-500/40 flex items-center gap-3">
                 <i id="toastIcon" data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
-                <p id="toastMessage" class="text-xs sm:text-sm font-medium">Alteração salva!</p>
+                <p id="toastMessage" class="text-xs sm:text-sm font-semibold">Alteração salva!</p>
             </div>
         </div>
 
@@ -154,144 +175,161 @@
         <!-- ============================================================ -->
         <section id="tab-matrix" class="tab-section space-y-4">
             
-            <!-- Barra de Ferramentas: Busca, Filtros, Modo de Exibição, Novo Modelo e CSV -->
-            <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200/90 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <!-- Barra de Ferramentas -->
+            <div class="bg-white/95 backdrop-blur-xs p-4 rounded-2xl shadow-sm border border-indigo-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                 <div class="flex flex-wrap items-center gap-2.5 flex-1">
-                    <!-- Campo de Busca -->
                     <div class="relative flex-1 min-w-[200px] max-w-xs">
-                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                        <input type="text" id="matrixSearchInput" oninput="renderMatrix()" placeholder="Buscar modelo ou receita..."
-                            class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-cyan-600 focus:bg-white">
+                        <i data-lucide="search" class="w-4 h-4 text-indigo-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="matrixSearchInput" oninput="renderMatrix()" placeholder="Buscar modelo, CLP ou cola..."
+                            class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:border-indigo-500 focus:bg-white">
                     </div>
 
-                    <!-- Filtro por Status -->
                     <select id="matrixStatusFilter" onchange="renderMatrix()"
-                        class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-cyan-600">
+                        class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold text-slate-700 focus:outline-none focus:border-indigo-500">
                         <option value="ALL">Status: Todos</option>
                         <option value="VALIDATED">✅ Validados</option>
                         <option value="PENDING">⏳ Pendentes</option>
                     </select>
 
-                    <!-- Filtro por Receita CLP (1 a 50) -->
                     <select id="matrixClpFilter" onchange="renderMatrix()"
-                        class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-cyan-600">
+                        class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold text-slate-700 focus:outline-none focus:border-indigo-500">
                         <option value="ALL">Receita CLP: Todas (01–50)</option>
-                        <!-- Preenchido via JS -->
                     </select>
                 </div>
 
-                <!-- Controles Direita: Modo Agrupado vs Plana, CSV e + Novo Modelo -->
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- Toggle Visualização Agrupada vs Lista Plana -->
-                    <div class="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                    <div class="inline-flex bg-indigo-50 p-1 rounded-xl border border-indigo-100">
                         <button type="button" onclick="setMatrixViewMode('grouped')" id="btnViewGrouped"
-                            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-900 text-white shadow-xs flex items-center gap-1.5" title="Agrupar modelos dentro da mesma Receita CLP">
+                            class="px-3 py-1.5 rounded-lg text-xs font-extrabold transition bg-indigo-600 text-white shadow-xs flex items-center gap-1.5">
                             <i data-lucide="folder-tree" class="w-3.5 h-3.5"></i>
                             <span>Agrupado CLP</span>
                         </button>
                         <button type="button" onclick="setMatrixViewMode('flat')" id="btnViewFlat"
-                            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900 flex items-center gap-1.5" title="Visualizar em tabela única contínua">
+                            class="px-3 py-1.5 rounded-lg text-xs font-extrabold transition text-indigo-700 hover:bg-indigo-100 flex items-center gap-1.5">
                             <i data-lucide="list" class="w-3.5 h-3.5"></i>
                             <span>Lista Plana</span>
                         </button>
                     </div>
 
                     <button onclick="exportMatrixCSV()"
-                        class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold px-3 py-2 rounded-xl border border-slate-200 transition">
+                        class="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-bold px-3 py-2 rounded-xl border border-emerald-200 transition">
                         <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
-                        <span>Exportar CSV</span>
+                        <span>CSV</span>
                     </button>
 
                     <button onclick="openModelModal()"
-                        class="flex items-center gap-1.5 bg-cyan-600 hover:bg-cyan-700 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-xs transition">
+                        class="flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-600 hover:to-indigo-700 text-white text-xs sm:text-sm font-extrabold px-4 py-2 rounded-xl shadow-md transition">
                         <i data-lucide="plus-circle" class="w-4 h-4"></i>
                         <span>+ Novo Modelo</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Container da Matriz (Agrupada ou Plana) -->
-            <div id="matrixContentContainer" class="space-y-4">
-                <!-- Preenchido via JS -->
+            <!-- Container da Matriz -->
+            <div id="matrixContentContainer" class="space-y-4"></div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- ABA 2: SIMULADOR & COMPARADOR VISUAL INTERATIVO              -->
+        <!-- ============================================================ -->
+        <section id="tab-simulator" class="tab-section hidden space-y-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-indigo-100 space-y-5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                            <span class="p-1.5 bg-fuchsia-100 text-fuchsia-700 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></span>
+                            Comparador Visual de Processo (Antes vs. Atual)
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Selecione um Modelo CLP ou uma Receita de Cola para inspecionar graficamente os desvios de dosagem e fluxo.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <select id="simModelSelect" onchange="onSimModelChange()" class="bg-indigo-50 border border-indigo-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold text-indigo-950 focus:outline-none">
+                            <!-- Preenchido via JS -->
+                        </select>
+                        <select id="simGlueSelect" onchange="renderSimulator()" class="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold text-amber-950 focus:outline-none">
+                            <!-- Preenchido via JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Resumo do Setup Selecionado -->
+                <div id="simSetupBanner" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+
+                <!-- Barras Comparativas Visuais -->
+                <div id="simChartsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
         </section>
 
         <!-- ============================================================ -->
-        <!-- ABA 2: PARÂMETROS DAS RECEITAS DE COLA (20 RECEITAS)         -->
+        <!-- ABA 3: PARÂMETROS DAS RECEITAS DE COLA (20 RECEITAS)         -->
         <!-- ============================================================ -->
         <section id="tab-glue" class="tab-section hidden space-y-4">
-            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                        <i data-lucide="droplet" class="w-5 h-5 text-amber-500"></i>
-                        Parâmetros das Receitas de Cola (Receita 01 a 20)
+                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                        <span class="p-1.5 bg-amber-100 text-amber-600 rounded-lg"><i data-lucide="droplet" class="w-5 h-5"></i></span>
+                        Parâmetros das 20 Receitas de Cola (Antes vs. Atual)
                     </h2>
                     <p class="text-xs text-slate-500 mt-0.5">
-                        Edição inline em tempo real. Compare <strong>ANTES (Baseline)</strong> vs <strong>ATUAL (Vigente)</strong> para Pressão Inicial, Dosador 1, Dosador 2 e Fluxo.
+                        Ajuste fino com botões <strong>- / +</strong> ou edição direta para Pressão Inicial, Dosador 1, Dosador 2 e Fluxo.
                     </p>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="relative">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                         <input type="text" id="glueSearchInput" oninput="renderGlueRecipes()" placeholder="Filtrar receita cola..."
-                            class="pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-cyan-600">
+                            class="pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-amber-500">
                     </div>
-                    <button onclick="exportGlueCSV()" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-200 transition">
-                        <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
+                    <button onclick="exportGlueCSV()" class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold px-3 py-2 rounded-xl border border-amber-200 transition">
+                        <i data-lucide="download" class="w-4 h-4 text-amber-600"></i>
                         <span>CSV Cola</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Grid/Cards das 20 Receitas de Cola -->
-            <div id="glueRecipesContainer" class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                <!-- Preenchido via JS (Receita Cola 01 até 20) -->
-            </div>
+            <div id="glueRecipesContainer" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></div>
         </section>
 
         <!-- ============================================================ -->
-        <!-- ABA 3: CATÁLOGO DE RECEITAS CLP (50 RECEITAS)                -->
+        <!-- ABA 4: CATÁLOGO DE RECEITAS CLP (50 RECEITAS)                -->
         <!-- ============================================================ -->
         <section id="tab-clp" class="tab-section hidden space-y-4">
-            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                        <i data-lucide="sliders" class="w-5 h-5 text-cyan-600"></i>
+                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                        <span class="p-1.5 bg-indigo-100 text-indigo-600 rounded-lg"><i data-lucide="sliders" class="w-5 h-5"></i></span>
                         Catálogo de Receitas CLP (Receita 01 a 50)
                     </h2>
                     <p class="text-xs text-slate-500 mt-0.5">
-                        Cadastre a descrição técnica de cada programa/receita do CLP e visualize quantos modelos estão vinculados.
+                        Gerencie os 50 programas do CLP e adicione novos modelos diretamente em cada receita.
                     </p>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="relative">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                         <input type="text" id="clpSearchInput" oninput="renderClpRecipes()" placeholder="Buscar receita CLP..."
-                            class="pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-cyan-600">
+                            class="pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-indigo-500">
                     </div>
-                    <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 cursor-pointer">
-                        <input type="checkbox" id="clpOnlyUsedCheck" onchange="renderClpRecipes()" class="rounded text-cyan-600">
+                    <label class="flex items-center gap-1.5 text-xs font-bold text-indigo-800 bg-indigo-50 px-3 py-2 rounded-xl border border-indigo-200 cursor-pointer">
+                        <input type="checkbox" id="clpOnlyUsedCheck" onchange="renderClpRecipes()" class="rounded text-indigo-600">
                         <span>Só com modelos</span>
                     </label>
                 </div>
             </div>
 
-            <!-- Tabela das 50 Receitas CLP -->
-            <div class="bg-white rounded-2xl shadow-xs border border-slate-200/90 overflow-hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-indigo-100 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-900 text-slate-200 text-[11px] font-bold uppercase tracking-wider">
+                            <tr class="bg-gradient-to-r from-slate-900 to-indigo-950 text-indigo-100 text-[11px] font-extrabold uppercase tracking-wider">
                                 <th class="py-3 px-4 w-28">Receita CLP</th>
                                 <th class="py-3 px-4">Nome / Descrição do Programa CLP</th>
-                                <th class="py-3 px-4">Observações Técnicas / Observação Linha</th>
+                                <th class="py-3 px-4">Observações Técnicas</th>
                                 <th class="py-3 px-4 text-center">Modelos Vinculados</th>
-                                <th class="py-3 px-4 text-right">Ação Rápida</th>
+                                <th class="py-3 px-4 text-right">Ação</th>
                             </tr>
                         </thead>
-                        <tbody id="clpTableBody" class="divide-y divide-slate-200/80 text-xs sm:text-sm">
-                            <!-- Preenchido via JS (Receitas 01 a 50) -->
-                        </tbody>
+                        <tbody id="clpTableBody" class="divide-y divide-slate-200/80 text-xs sm:text-sm"></tbody>
                     </table>
                 </div>
             </div>
@@ -302,10 +340,10 @@
     <!-- ========================================== -->
     <!-- MODAL CADASTRO / EDIÇÃO DE MODELO CLP      -->
     <!-- ========================================== -->
-    <div id="modelModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+    <div id="modelModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-indigo-100">
             <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                <h3 id="modelModalTitle" class="text-lg font-extrabold text-slate-900">Novo Modelo CLP</h3>
+                <h3 id="modelModalTitle" class="text-lg font-black text-slate-900">Novo Modelo CLP</h3>
                 <button onclick="closeModal('modelModal')" class="text-slate-400 hover:text-slate-600">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -314,47 +352,44 @@
                 <input type="hidden" id="editModelId">
                 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">1. Código / Nome do Modelo CLP *</label>
+                    <label class="block text-xs font-extrabold uppercase text-slate-600 mb-1">1. Código / Nome do Modelo CLP *</label>
                     <input type="text" id="modelCodeInput" placeholder="Ex: 9XS-A, 9XS-B, MOD-440..." required
-                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono-tech font-bold text-slate-900 focus:outline-none focus:border-cyan-600 focus:bg-white">
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono-tech font-bold text-slate-900 focus:outline-none focus:border-indigo-600 focus:bg-white">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">2. Receita CLP (01 a 50) *</label>
+                        <label class="block text-xs font-extrabold uppercase text-indigo-700 mb-1">2. Receita CLP (01 a 50) *</label>
                         <select id="modelClpSelect" required
-                            class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:border-cyan-600">
-                            <!-- Preenchido via JS -->
+                            class="w-full px-3 py-2.5 bg-indigo-50/70 border border-indigo-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:border-indigo-600">
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">3. Receita Cola Atual (01 a 20) *</label>
+                        <label class="block text-xs font-extrabold uppercase text-amber-700 mb-1">3. Receita Cola Atual (01 a 20) *</label>
                         <select id="modelGlueSelect" required
-                            class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:border-cyan-600">
-                            <!-- Preenchido via JS -->
+                            class="w-full px-3 py-2.5 bg-amber-50/70 border border-amber-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:border-amber-500">
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">4. Receita Cola Antiga (Histórico)</label>
+                    <label class="block text-xs font-extrabold uppercase text-slate-600 mb-1">4. Receita Cola Antiga (Histórico)</label>
                     <select id="modelOldGlueSelect"
-                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-cyan-600">
-                        <!-- Preenchido via JS -->
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-indigo-600">
                     </select>
-                    <p class="text-[11px] text-slate-400 mt-1">Mantém o registro da receita de cola utilizada anteriormente neste modelo.</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Guarda qual receita de cola este modelo utilizava anteriormente.</p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Observação / Nota de Engenharia (Opcional)</label>
+                    <label class="block text-xs font-extrabold uppercase text-slate-600 mb-1">Observação / Nota de Engenharia</label>
                     <input type="text" id="modelNoteInput" placeholder="Ex: Variante com bico 1.2mm, lote piloto..."
-                        class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-cyan-600">
+                        class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-indigo-600">
                 </div>
 
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div class="flex items-center justify-between p-3 bg-emerald-50/70 rounded-xl border border-emerald-200">
                     <div>
-                        <span class="text-sm font-bold text-slate-800">Status de Validação</span>
-                        <p class="text-xs text-slate-500">Marque se os parâmetros já foram aprovados em linha</p>
+                        <span class="text-sm font-extrabold text-emerald-900">Status de Validação</span>
+                        <p class="text-xs text-emerald-700">Marque se os parâmetros já foram homologados</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="modelValidatedInput" class="sr-only peer">
@@ -363,8 +398,8 @@
                 </div>
 
                 <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closeModal('modelModal')" class="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 text-xs sm:text-sm font-bold bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl shadow-xs">Salvar Modelo</button>
+                    <button type="button" onclick="closeModal('modelModal')" class="px-4 py-2 text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 text-xs sm:text-sm font-extrabold bg-gradient-to-r from-cyan-500 to-indigo-600 text-white rounded-xl shadow-md">Salvar Modelo</button>
                 </div>
             </form>
         </div>
@@ -373,23 +408,23 @@
     <!-- ========================================== -->
     <!-- MODAL RESET / RESTAURAR DADOS              -->
     <!-- ========================================== -->
-    <div id="resetModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div id="resetModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
             <div class="flex justify-between items-center">
-                <h3 class="text-lg font-extrabold text-slate-900">Gerenciar Dados Locais</h3>
+                <h3 class="text-lg font-black text-slate-900">Gerenciar Dados Locais</h3>
                 <button onclick="closeModal('resetModal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <p class="text-xs sm:text-sm text-slate-600">
-                Todos os modelos e parâmetros das 50 receitas CLP e 20 receitas de Cola são salvos automaticamente no navegador (<code class="font-mono-tech bg-slate-100 px-1 rounded">localStorage</code>).
+                Os modelos e parâmetros das 50 receitas CLP e 20 receitas de Cola são salvos automaticamente neste dispositivo. Use o botão <strong>Backup JSON</strong> para transferir entre PC e celular.
             </p>
             <div class="space-y-2.5 pt-2">
-                <button onclick="restoreIndustrialSeed()" class="w-full py-2.5 px-4 bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-200 font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+                <button onclick="restoreIndustrialSeed()" class="w-full py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                     Restaurar Dados Industriais de Exemplo
                 </button>
                 <button onclick="clearAllModelsAndReset()" class="w-full py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
-                    Limpar Todos os Modelos (Manter Estrutura 50 CLP / 20 Cola)
+                    Limpar Todos os Modelos (Manter 50 CLP / 20 Cola)
                 </button>
             </div>
         </div>
@@ -399,7 +434,7 @@
     <!-- SCRIPT PRINCIPAL DA APLICAÇÃO              -->
     <!-- ========================================== -->
     <script>
-        const STORAGE_KEY = 'eng_process_clp_cola_v2';
+        const STORAGE_KEY = 'eng_process_clp_cola_v3';
 
         let state = {
             models: [],
@@ -483,7 +518,7 @@
                 { id: 'm1', modelCode: '9XS-A', clpRecipeId: 1, glueRecipeId: 1, oldGlueRecipeId: null, validated: true, validatedAt: todayStr, note: 'Versão base validada em produção' },
                 { id: 'm2', modelCode: '9XS-B', clpRecipeId: 1, glueRecipeId: 1, oldGlueRecipeId: 4, validated: true, validatedAt: todayStr, note: 'Migrado da Cola 04 para Cola 01' },
                 { id: 'm3', modelCode: '9XS-C', clpRecipeId: 1, glueRecipeId: 1, oldGlueRecipeId: null, validated: false, validatedAt: '', note: 'Aguardando aprovação qualidade turno B' },
-                { id: 'm4', modelCode: '9XS-D (Export)', clpRecipeId: 1, glueRecipeId: 3, oldGlueRecipeId: 1, validated: false, validatedAt: '', note: 'Usa CLP 01 com cola de alta viscosidade 03 (antes Cola 01)' },
+                { id: 'm4', modelCode: '9XS-D (Export)', clpRecipeId: 1, glueRecipeId: 3, oldGlueRecipeId: 1, validated: false, validatedAt: '', note: 'Usa CLP 01 com cola de alta viscosidade 03' },
                 { id: 'm5', modelCode: '7XT-100', clpRecipeId: 2, glueRecipeId: 2, oldGlueRecipeId: null, validated: true, validatedAt: todayStr, note: 'Linha 2 - Turno A/B' },
                 { id: 'm6', modelCode: '7XT-200', clpRecipeId: 2, glueRecipeId: 2, oldGlueRecipeId: null, validated: true, validatedAt: todayStr, note: 'Mesma receita CLP 02 e Cola 02' },
                 { id: 'm7', modelCode: 'HD-900-PRO', clpRecipeId: 3, glueRecipeId: 3, oldGlueRecipeId: 2, validated: false, validatedAt: '', note: 'Ajuste fino de fluxo em andamento' },
@@ -495,7 +530,7 @@
         }
 
         function loadState() {
-            const raw = localStorage.getItem(STORAGE_KEY);
+            const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('eng_process_clp_cola_v2');
             if (!raw) {
                 seedRealisticIndustrialData();
                 return;
@@ -520,7 +555,6 @@
                     glueRecipes: mergedGlue
                 };
             } catch (e) {
-                console.error('Erro ao carregar localStorage:', e);
                 seedRealisticIndustrialData();
             }
         }
@@ -541,7 +575,7 @@
             msgEl.textContent = msg;
             iconEl.className = type === 'error' ? 'w-5 h-5 text-rose-400' : 'w-5 h-5 text-emerald-400';
             toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2800);
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2600);
         }
 
         function switchTab(tabName) {
@@ -550,11 +584,13 @@
 
             document.querySelectorAll('.nav-tab-btn').forEach(btn => {
                 if (btn.dataset.tab === tabName) {
-                    btn.className = 'nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap bg-cyan-500 text-slate-950 shadow-sm';
+                    btn.className = 'nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-extrabold rounded-xl transition whitespace-nowrap bg-gradient-to-r from-cyan-400 to-teal-300 text-slate-950 shadow-md';
                 } else {
-                    btn.className = 'nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-slate-300 hover:bg-slate-800 hover:text-white';
+                    btn.className = 'nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-indigo-100 hover:bg-white/10';
                 }
             });
+
+            if (tabName === 'simulator') renderSimulator();
             lucide.createIcons();
         }
 
@@ -571,6 +607,19 @@
                     const label = r.name ? `Receita CLP ${pad2(r.id)} — ${r.name}` : `Receita CLP ${pad2(r.id)}`;
                     return `<option value="${r.id}">${label}</option>`;
                 }).join('');
+
+            const simModelSel = document.getElementById('simModelSelect');
+            if (simModelSel) {
+                simModelSel.innerHTML = `<option value="">-- Selecione um Modelo CLP --</option>` +
+                    state.models.map(m => `<option value="${m.id}">Modelo: ${escapeHtml(m.modelCode)} (CLP ${pad2(m.clpRecipeId)} | Cola ${pad2(m.glueRecipeId)})</option>`).join('');
+            }
+
+            const simGlueSel = document.getElementById('simGlueSelect');
+            if (simGlueSel) {
+                simGlueSel.innerHTML = state.glueRecipes.map(g =>
+                    `<option value="${g.id}">Receita Cola ${pad2(g.id)}${g.name ? ' — ' + escapeHtml(g.name) : ''}</option>`
+                ).join('');
+            }
         }
 
         function updateKPIs() {
@@ -590,13 +639,16 @@
             const changedGlueCount = state.glueRecipes.filter(g => isGlueRecipeModified(g)).length;
 
             document.getElementById('kpiTotalModels').textContent = totalModels;
-            document.getElementById('kpiModelsMultiSub').textContent = `${activeClpSet.size} receitas CLP em uso`;
+            document.getElementById('kpiModelsMultiSub').textContent = `${activeClpSet.size} CLPs ativas`;
             document.getElementById('kpiValidatedCount').textContent = `${validatedModels} / ${totalModels}`;
             document.getElementById('kpiValidatedPctBadge').textContent = `${pct}%`;
-            document.getElementById('kpiPendingCount').textContent = `${pendingModels} pendente(s)`;
+            document.getElementById('kpiPendingCount').textContent = `${pendingModels} pend.`;
             document.getElementById('kpiClpConfigured').textContent = `${configuredClpCount} / 50`;
             document.getElementById('kpiGlueConfigured').textContent = `${configuredGlueCount} / 20`;
             document.getElementById('kpiGlueChangedBadge').textContent = `${changedGlueCount} alterada(s)`;
+
+            document.getElementById('headerProgressBar').style.width = `${pct}%`;
+            document.getElementById('headerProgressLabel').textContent = `${pct}% VALIDADO (${validatedModels}/${totalModels})`;
         }
 
         function refreshAllViews() {
@@ -605,20 +657,24 @@
             renderMatrix();
             renderGlueRecipes();
             renderClpRecipes();
+            renderSimulator();
             lucide.createIcons();
         }
 
+        // ==========================================
+        // ABA 1: MATRIZ DE MODELOS
+        // ==========================================
         function setMatrixViewMode(mode) {
             matrixViewMode = mode;
             const btnGrouped = document.getElementById('btnViewGrouped');
             const btnFlat = document.getElementById('btnViewFlat');
 
             if (mode === 'grouped') {
-                btnGrouped.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-900 text-white shadow-xs flex items-center gap-1.5';
-                btnFlat.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900 flex items-center gap-1.5';
+                btnGrouped.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition bg-indigo-600 text-white shadow-xs flex items-center gap-1.5';
+                btnFlat.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition text-indigo-700 hover:bg-indigo-100 flex items-center gap-1.5';
             } else {
-                btnFlat.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-900 text-white shadow-xs flex items-center gap-1.5';
-                btnGrouped.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900 flex items-center gap-1.5';
+                btnFlat.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition bg-indigo-600 text-white shadow-xs flex items-center gap-1.5';
+                btnGrouped.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition text-indigo-700 hover:bg-indigo-100 flex items-center gap-1.5';
             }
             renderMatrix();
             lucide.createIcons();
@@ -651,11 +707,11 @@
             if (!g) return '';
             const modified = isGlueRecipeModified(g);
             return `
-                <div class="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] font-mono-tech ${modified ? 'text-amber-700' : 'text-slate-500'}">
-                    <span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title="Pressão Inicial Atual">P: <strong>${g.pressureCurrent}</strong></span>
-                    <span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title="Dosador 1 Atual">D1: <strong>${g.doser1Current}</strong></span>
-                    <span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title="Dosador 2 Atual">D2: <strong>${g.doser2Current}</strong></span>
-                    <span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title="Fluxo Atual">Flx: <strong>${g.flowCurrent}</strong></span>
+                <div class="mt-1.5 flex flex-wrap items-center gap-1 text-[10px] font-mono-tech">
+                    <span class="bg-cyan-50 text-cyan-800 px-1.5 py-0.5 rounded-md border border-cyan-200">P:<strong>${g.pressureCurrent}</strong></span>
+                    <span class="bg-indigo-50 text-indigo-800 px-1.5 py-0.5 rounded-md border border-indigo-200">D1:<strong>${g.doser1Current}</strong></span>
+                    <span class="bg-violet-50 text-violet-800 px-1.5 py-0.5 rounded-md border border-violet-200">D2:<strong>${g.doser2Current}</strong></span>
+                    <span class="${modified ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-emerald-50 text-emerald-800 border-emerald-200'} px-1.5 py-0.5 rounded-md border">Flx:<strong>${g.flowCurrent}</strong></span>
                 </div>
             `;
         }
@@ -672,37 +728,31 @@
             }).join('');
 
             const oldGlueIdNum = m.oldGlueRecipeId ? Number(m.oldGlueRecipeId) : '';
-            const oldGlueOptions = `<option value="" ${!oldGlueIdNum ? 'selected' : ''}>— Nenhuma / Sem histórico —</option>` +
+            const oldGlueOptions = `<option value="" ${!oldGlueIdNum ? 'selected' : ''}>— Sem histórico —</option>` +
                 state.glueRecipes.map(g => {
                     const desc = g.name ? ` - ${g.name}` : '';
                     return `<option value="${g.id}" ${g.id === oldGlueIdNum ? 'selected' : ''}>Cola ${pad2(g.id)}${desc}</option>`;
                 }).join('');
 
-            const glueObj = state.glueRecipes.find(g => g.id === m.glueRecipeId);
-            const glueTooltip = glueObj 
-                ? `Receita Cola ${pad2(glueObj.id)}${glueObj.name ? ' (' + glueObj.name + ')' : ''} | Pressão: ${glueObj.pressureCurrent} | Dos1: ${glueObj.doser1Current} | Dos2: ${glueObj.doser2Current} | Fluxo: ${glueObj.flowCurrent}`
-                : '';
-
             return `
-                <tr class="hover:bg-slate-50/90 transition group">
+                <tr class="hover:bg-indigo-50/40 transition group">
                     <td class="py-3 px-4 align-top">
                         <input type="text" value="${escapeHtml(m.modelCode)}"
                             onchange="inlineUpdateModel('${m.id}', 'modelCode', this.value)"
-                            class="w-full max-w-[170px] font-mono-tech font-bold text-sm text-slate-900 bg-transparent hover:bg-white focus:bg-white px-2 py-1 rounded-lg border border-transparent hover:border-slate-300 focus:border-cyan-600 focus:outline-none transition"
-                            title="Clique para editar o código do modelo">
-                        ${m.note ? `<p class="text-[11px] text-slate-400 px-2 mt-0.5 truncate max-w-[190px]" title="${escapeHtml(m.note)}">${escapeHtml(m.note)}</p>` : ''}
+                            class="w-full max-w-[170px] font-mono-tech font-extrabold text-sm text-slate-900 bg-white/80 hover:bg-white focus:bg-white px-2.5 py-1 rounded-lg border border-slate-200 hover:border-indigo-300 focus:border-indigo-600 focus:outline-none transition">
+                        ${m.note ? `<p class="text-[11px] text-slate-500 px-1 mt-1 truncate max-w-[190px]" title="${escapeHtml(m.note)}">${escapeHtml(m.note)}</p>` : ''}
                     </td>
 
                     <td class="py-3 px-4 align-top">
                         <select onchange="inlineUpdateModel('${m.id}', 'clpRecipeId', Number(this.value))"
-                            class="w-full max-w-[230px] bg-cyan-50/60 hover:bg-cyan-50 border border-cyan-200/80 text-slate-800 text-xs font-semibold rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-cyan-600 cursor-pointer">
+                            class="w-full max-w-[220px] bg-indigo-50 hover:bg-indigo-100/70 border border-indigo-200 text-indigo-950 text-xs font-bold rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-indigo-600 cursor-pointer">
                             ${clpOptions}
                         </select>
                     </td>
 
-                    <td class="py-3 px-4 align-top" title="${escapeHtml(glueTooltip)}">
+                    <td class="py-3 px-4 align-top">
                         <select onchange="inlineUpdateModel('${m.id}', 'glueRecipeId', Number(this.value))"
-                            class="w-full max-w-[230px] bg-amber-50/60 hover:bg-amber-50 border border-amber-200/80 text-slate-800 text-xs font-semibold rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-amber-500 cursor-pointer">
+                            class="w-full max-w-[230px] bg-amber-50 hover:bg-amber-100/70 border border-amber-300 text-amber-950 text-xs font-bold rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-amber-600 cursor-pointer">
                             ${glueOptions}
                         </select>
                         ${buildGlueSummarySnippet(m.glueRecipeId)}
@@ -711,12 +761,12 @@
                     <td class="py-3 px-4 align-top">
                         <div class="flex items-center gap-1.5">
                             <select onchange="inlineUpdateModel('${m.id}', 'oldGlueRecipeId', this.value ? Number(this.value) : null)"
-                                class="w-full max-w-[210px] ${oldGlueIdNum ? 'bg-slate-100 border-slate-300 text-slate-700' : 'bg-slate-50 border-slate-200 text-slate-400'} hover:bg-white text-xs font-semibold rounded-xl px-2.5 py-1.5 border focus:outline-none focus:border-slate-500 cursor-pointer">
+                                class="w-full max-w-[200px] ${oldGlueIdNum ? 'bg-slate-100 border-slate-300 text-slate-800' : 'bg-slate-50 border-slate-200 text-slate-400'} hover:bg-white text-xs font-semibold rounded-xl px-2.5 py-1.5 border focus:outline-none cursor-pointer">
                                 ${oldGlueOptions}
                             </select>
                             ${oldGlueIdNum && oldGlueIdNum !== m.glueRecipeId ? `
-                                <button type="button" onclick="restoreOldGlueRecipe('${m.id}')" title="Restaurar Receita Cola Antiga (${pad2(oldGlueIdNum)}) como Atual"
-                                    class="p-1.5 bg-slate-100 hover:bg-amber-100 text-slate-600 hover:text-amber-800 rounded-lg border border-slate-200 transition shrink-0">
+                                <button type="button" onclick="restoreOldGlueRecipe('${m.id}')" title="Reverter para Cola ${pad2(oldGlueIdNum)}"
+                                    class="p-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg border border-amber-300 transition shrink-0">
                                     <i data-lucide="history" class="w-3.5 h-3.5"></i>
                                 </button>
                             ` : ''}
@@ -726,29 +776,33 @@
 
                     <td class="py-3 px-4 align-top">
                         <button type="button" onclick="toggleModelValidated('${m.id}')"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition ${
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold border shadow-2xs transition ${
                                 m.validated
-                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
-                                    : 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+                                    ? 'bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600'
+                                    : 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
                             }">
                             <i data-lucide="${m.validated ? 'check-circle-2' : 'clock'}" class="w-3.5 h-3.5"></i>
                             <span>${m.validated ? 'Validado' : 'Pendente'}</span>
                         </button>
-                        ${m.validated && m.validatedAt ? `<span class="block text-[10px] text-slate-400 mt-1 font-mono-tech">Em: ${m.validatedAt}</span>` : ''}
+                        ${m.validated && m.validatedAt ? `<span class="block text-[10px] text-emerald-700 font-semibold mt-1 font-mono-tech">${m.validatedAt}</span>` : ''}
                     </td>
 
                     <td class="py-3 px-4 align-top text-right whitespace-nowrap">
                         <div class="inline-flex items-center gap-1">
-                            <button onclick="openModelModal('${m.id}')" title="Editar Detalhes do Modelo"
-                                class="p-1.5 text-slate-500 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">
+                            <button onclick="openSimulatorForModel('${m.id}')" title="Ver Gráfico Comparativo deste Modelo"
+                                class="p-1.5 text-fuchsia-600 hover:bg-fuchsia-50 rounded-lg transition">
+                                <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="openModelModal('${m.id}')" title="Editar Detalhes"
+                                class="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
                                 <i data-lucide="pencil" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="duplicateModel('${m.id}')" title="Duplicar Modelo na mesma Receita CLP"
-                                class="p-1.5 text-slate-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition">
+                            <button onclick="duplicateModel('${m.id}')" title="Duplicar Modelo"
+                                class="p-1.5 text-cyan-600 hover:bg-cyan-50 rounded-lg transition">
                                 <i data-lucide="copy-plus" class="w-4 h-4"></i>
                             </button>
                             <button onclick="deleteModel('${m.id}')" title="Excluir Modelo"
-                                class="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition">
+                                class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -763,12 +817,12 @@
 
             if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="bg-white rounded-2xl p-10 text-center border border-slate-200/90 shadow-xs">
-                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                    <div class="bg-white rounded-2xl p-10 text-center border border-indigo-100 shadow-sm">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center mx-auto mb-3">
                             <i data-lucide="search-x" class="w-6 h-6"></i>
                         </div>
-                        <h3 class="text-base font-bold text-slate-800">Nenhum modelo encontrado</h3>
-                        <p class="text-xs text-slate-500 mt-1">Ajuste os filtros acima ou clique em "+ Novo Modelo" para cadastrar.</p>
+                        <h3 class="text-base font-extrabold text-slate-800">Nenhum modelo encontrado</h3>
+                        <p class="text-xs text-slate-500 mt-1">Altere os filtros ou clique em "+ Novo Modelo" para cadastrar.</p>
                     </div>
                 `;
                 lucide.createIcons();
@@ -778,15 +832,15 @@
             if (matrixViewMode === 'flat') {
                 const sorted = [...filtered].sort((a, b) => a.clpRecipeId - b.clpRecipeId || a.modelCode.localeCompare(b.modelCode));
                 container.innerHTML = `
-                    <div class="bg-white rounded-2xl shadow-xs border border-slate-200/90 overflow-hidden">
+                    <div class="bg-white rounded-2xl shadow-sm border border-indigo-100 overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead>
-                                    <tr class="bg-slate-900 text-slate-200 text-[11px] font-bold uppercase tracking-wider">
+                                    <tr class="bg-gradient-to-r from-slate-900 to-indigo-950 text-indigo-100 text-[11px] font-extrabold uppercase tracking-wider">
                                         <th class="py-3 px-4">1. Modelo CLP</th>
                                         <th class="py-3 px-4">2. Receita CLP (01–50)</th>
-                                        <th class="py-3 px-4">3. Receita Cola Atual (01–20)</th>
-                                        <th class="py-3 px-4">4. Receita Cola Antiga (Histórico)</th>
+                                        <th class="py-3 px-4">3. Receita Cola Atual</th>
+                                        <th class="py-3 px-4">4. Cola Antiga (Histórico)</th>
                                         <th class="py-3 px-4">5. Validado</th>
                                         <th class="py-3 px-4 text-right">6. Ações</th>
                                     </tr>
@@ -811,26 +865,33 @@
                     const groupModels = groupsMap.get(clpId);
                     const clpInfo = state.clpRecipes.find(c => c.id === clpId) || { name: '', notes: '' };
                     const validCount = groupModels.filter(m => m.validated).length;
+                    const allValidated = validCount === groupModels.length;
 
                     return `
-                        <div class="bg-white rounded-2xl shadow-xs border border-slate-200/90 overflow-hidden">
-                            <div class="bg-slate-800 text-white px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="bg-white rounded-2xl shadow-sm border border-indigo-100 overflow-hidden">
+                            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                 <div class="flex items-center gap-2.5 flex-wrap">
-                                    <span class="px-2.5 py-1 rounded-lg bg-cyan-500 text-slate-950 font-mono-tech font-extrabold text-xs">
+                                    <span class="px-2.5 py-1 rounded-lg bg-gradient-to-r from-cyan-400 to-teal-300 text-slate-950 font-mono-tech font-black text-xs shadow-xs">
                                         RECEITA CLP ${pad2(clpId)}
                                     </span>
-                                    <span class="font-bold text-sm text-white">
-                                        ${clpInfo.name ? escapeHtml(clpInfo.name) : '<span class="text-slate-400 italic font-normal">Sem descrição cadastrada</span>'}
+                                    <span class="font-extrabold text-sm text-white">
+                                        ${clpInfo.name ? escapeHtml(clpInfo.name) : '<span class="text-indigo-300/70 italic font-normal">Sem descrição cadastrada</span>'}
                                     </span>
-                                    ${clpInfo.notes ? `<span class="text-xs text-slate-400 hidden md:inline">• ${escapeHtml(clpInfo.notes)}</span>` : ''}
+                                    ${clpInfo.notes ? `<span class="text-xs text-indigo-200/80 hidden md:inline">• ${escapeHtml(clpInfo.notes)}</span>` : ''}
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[11px] font-mono-tech px-2.5 py-0.5 rounded-full bg-slate-700 text-slate-200">
-                                        ${groupModels.length} modelo(s) • ${validCount} validado(s)
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-[11px] font-mono-tech font-bold px-2.5 py-0.5 rounded-full ${allValidated ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/30' : 'bg-white/10 text-indigo-100'}">
+                                        ${validCount}/${groupModels.length} validado(s)
                                     </span>
+                                    ${!allValidated ? `
+                                        <button onclick="validateAllInClp(${clpId})"
+                                            class="text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/35 text-emerald-300 border border-emerald-400/40 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
+                                            <i data-lucide="check-check" class="w-3.5 h-3.5"></i> Validar Todos
+                                        </button>
+                                    ` : ''}
                                     <button onclick="openModelModalWithClp(${clpId})"
-                                        class="text-xs font-bold bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
-                                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Modelo nesta CLP
+                                        class="text-xs font-bold bg-cyan-400/20 hover:bg-cyan-400/30 text-cyan-200 border border-cyan-400/40 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
+                                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> + Modelo
                                     </button>
                                 </div>
                             </div>
@@ -838,11 +899,11 @@
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left border-collapse">
                                     <thead>
-                                        <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                                        <tr class="bg-indigo-50/70 border-b border-indigo-100 text-[11px] font-extrabold text-indigo-900 uppercase tracking-wider">
                                             <th class="py-2.5 px-4">1. Modelo CLP</th>
                                             <th class="py-2.5 px-4">2. Receita CLP</th>
                                             <th class="py-2.5 px-4">3. Receita Cola Atual</th>
-                                            <th class="py-2.5 px-4">4. Receita Cola Antiga (Histórico)</th>
+                                            <th class="py-2.5 px-4">4. Cola Antiga (Histórico)</th>
                                             <th class="py-2.5 px-4">5. Validado</th>
                                             <th class="py-2.5 px-4 text-right">6. Ações</th>
                                         </tr>
@@ -857,6 +918,19 @@
                 }).join('');
             }
             lucide.createIcons();
+        }
+
+        function validateAllInClp(clpId) {
+            const todayStr = new Date().toLocaleDateString('pt-BR');
+            state.models.forEach(m => {
+                if (m.clpRecipeId === clpId && !m.validated) {
+                    m.validated = true;
+                    m.validatedAt = todayStr;
+                }
+            });
+            saveState();
+            renderMatrix();
+            showToast(`Todos os modelos da Receita CLP ${pad2(clpId)} foram validados!`);
         }
 
         function inlineUpdateModel(modelId, field, value) {
@@ -876,18 +950,14 @@
                 }
                 state.models[idx].glueRecipeId = newGlueId;
                 saveState();
-                renderMatrix();
-                renderClpRecipes();
-                renderGlueRecipes();
+                refreshAllViews();
                 showToast(`Receita Cola alterada para ${pad2(newGlueId)} (Cola ${pad2(previousGlueId)} salva no histórico)!`);
                 return;
             }
 
             state.models[idx][field] = typeof value === 'string' ? value.trim() : value;
             saveState();
-            renderMatrix();
-            renderClpRecipes();
-            renderGlueRecipes();
+            refreshAllViews();
             showToast('Modelo atualizado!');
         }
 
@@ -901,8 +971,7 @@
             state.models[idx].glueRecipeId = oldId;
             state.models[idx].oldGlueRecipeId = currentId;
             saveState();
-            renderMatrix();
-            renderGlueRecipes();
+            refreshAllViews();
             showToast(`Receita Cola ${pad2(oldId)} restaurada como Atual!`);
         }
 
@@ -913,7 +982,7 @@
             m.validatedAt = m.validated ? new Date().toLocaleDateString('pt-BR') : '';
             saveState();
             renderMatrix();
-            showToast(m.validated ? `Modelo ${m.modelCode} marcado como VALIDADO!` : `Modelo ${m.modelCode} alterado para PENDENTE.`);
+            showToast(m.validated ? `Modelo ${m.modelCode} VALIDADO!` : `Modelo ${m.modelCode} marcado como PENDENTE.`);
         }
 
         function duplicateModel(modelId) {
@@ -939,6 +1008,103 @@
             showToast('Modelo removido da matriz.');
         }
 
+        // ==========================================
+        // ABA 2: SIMULADOR & COMPARADOR VISUAL
+        // ==========================================
+        function openSimulatorForModel(modelId) {
+            switchTab('simulator');
+            const sel = document.getElementById('simModelSelect');
+            sel.value = modelId;
+            onSimModelChange();
+        }
+
+        function onSimModelChange() {
+            const modelId = document.getElementById('simModelSelect').value;
+            const m = state.models.find(item => item.id === modelId);
+            if (m) {
+                document.getElementById('simGlueSelect').value = String(m.glueRecipeId);
+            }
+            renderSimulator();
+        }
+
+        function renderSimulator() {
+            const modelId = document.getElementById('simModelSelect').value;
+            const m = state.models.find(item => item.id === modelId) || state.models[0];
+            const glueId = Number(document.getElementById('simGlueSelect').value || (m ? m.glueRecipeId : 1));
+            const g = state.glueRecipes.find(item => item.id === glueId) || state.glueRecipes[0];
+            const clp = m ? (state.clpRecipes.find(c => c.id === m.clpRecipeId) || { name: '' }) : { name: '' };
+
+            const banner = document.getElementById('simSetupBanner');
+            banner.innerHTML = `
+                <div class="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-50 to-cyan-50 border border-indigo-200">
+                    <span class="text-[10px] font-extrabold uppercase text-indigo-600">Modelo Selecionado</span>
+                    <p class="text-base font-black font-mono-tech text-slate-900 mt-0.5">${m ? escapeHtml(m.modelCode) : 'Nenhum modelo'}</p>
+                    <p class="text-xs text-slate-600 mt-0.5">${m ? `CLP ${pad2(m.clpRecipeId)} ${clp.name ? '— ' + escapeHtml(clp.name) : ''}` : ''}</p>
+                </div>
+                <div class="p-3.5 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+                    <span class="text-[10px] font-extrabold uppercase text-amber-700">Receita de Cola Analisada</span>
+                    <p class="text-base font-black font-mono-tech text-amber-950 mt-0.5">COLA ${pad2(g.id)}</p>
+                    <p class="text-xs text-amber-800 mt-0.5">${g.name ? escapeHtml(g.name) : 'Sem descrição'}</p>
+                </div>
+                <div class="p-3.5 rounded-2xl ${m && m.validated ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'} border">
+                    <span class="text-[10px] font-extrabold uppercase ${m && m.validated ? 'text-emerald-700' : 'text-rose-700'}">Status & Histórico</span>
+                    <p class="text-base font-black ${m && m.validated ? 'text-emerald-900' : 'text-rose-900'} mt-0.5">${m ? (m.validated ? '✅ VALIDADO' : '⏳ PENDENTE') : '—'}</p>
+                    <p class="text-xs text-slate-600 mt-0.5">${m && m.oldGlueRecipeId ? `Receita anterior: Cola ${pad2(m.oldGlueRecipeId)}` : 'Sem troca anterior registrada'}</p>
+                </div>
+            `;
+
+            const metrics = [
+                { label: '1. Pressão Inicial', unit: 'bar', before: Number(g.pressureBefore), current: Number(g.pressureCurrent), max: 10, color: 'from-cyan-500 to-blue-600' },
+                { label: '2. Dosador 1', unit: '% / rpm', before: Number(g.doser1Before), current: Number(g.doser1Current), max: 100, color: 'from-indigo-500 to-violet-600' },
+                { label: '3. Dosador 2', unit: '% / rpm', before: Number(g.doser2Before), current: Number(g.doser2Current), max: 100, color: 'from-fuchsia-500 to-pink-600' },
+                { label: '4. Fluxo de Aplicação', unit: 'g/s', before: Number(g.flowBefore), current: Number(g.flowCurrent), max: 40, color: 'from-amber-500 to-orange-600' }
+            ];
+
+            document.getElementById('simChartsGrid').innerHTML = metrics.map(item => {
+                const maxScale = Math.max(item.max, item.before * 1.2, item.current * 1.2, 1);
+                const pctBefore = Math.min(100, Math.round((item.before / maxScale) * 100));
+                const pctCurrent = Math.min(100, Math.round((item.current / maxScale) * 100));
+                const diff = +(item.current - item.before).toFixed(2);
+                const diffBadge = diff === 0
+                    ? `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Sem alteração (0)</span>`
+                    : `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">Desvio: ${diff > 0 ? '+' : ''}${diff} ${item.unit}</span>`;
+
+                return `
+                    <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50/60 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-black text-slate-800">${item.label}</span>
+                            ${diffBadge}
+                        </div>
+
+                        <div class="space-y-2">
+                            <div>
+                                <div class="flex justify-between text-xs font-mono-tech text-slate-500 mb-1">
+                                    <span>ANTES (Baseline)</span>
+                                    <span class="font-bold text-slate-700">${item.before} ${item.unit}</span>
+                                </div>
+                                <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-slate-500 rounded-full transition-all duration-500" style="width: ${pctBefore}%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-mono-tech text-slate-800 mb-1">
+                                    <span class="font-bold">ATUAL (Vigente)</span>
+                                    <span class="font-black text-indigo-950">${item.current} ${item.unit}</span>
+                                </div>
+                                <div class="w-full h-3.5 bg-slate-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r ${item.color} rounded-full transition-all duration-500" style="width: ${pctCurrent}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // MODAL DE MODELO CLP
+        // ==========================================
         function openModelModal(modelId = null) {
             const clpSel = document.getElementById('modelClpSelect');
             clpSel.innerHTML = state.clpRecipes.map(r => 
@@ -1039,6 +1205,9 @@
             refreshAllViews();
         }
 
+        // ==========================================
+        // ABA 3: PARÂMETROS DAS RECEITAS DE COLA (20)
+        // ==========================================
         function isGlueRecipeModified(g) {
             return Number(g.pressureBefore) !== Number(g.pressureCurrent) ||
                    Number(g.doser1Before) !== Number(g.doser1Current) ||
@@ -1046,28 +1215,44 @@
                    Number(g.flowBefore) !== Number(g.flowCurrent);
         }
 
+        function stepGlueParam(glueId, key, delta) {
+            const g = state.glueRecipes.find(item => item.id === glueId);
+            if (!g) return;
+            const next = Math.max(0, +(Number(g[key]) + delta).toFixed(1));
+            g[key] = next;
+            saveState();
+            renderGlueRecipes();
+            renderMatrix();
+        }
+
         function buildParamComparisonBox(glueId, label, unit, beforeKey, currentKey, beforeVal, currentVal) {
             const changed = Number(beforeVal) !== Number(currentVal);
             return `
-                <div class="p-2.5 rounded-xl border transition ${changed ? 'bg-amber-50/70 border-amber-300' : 'bg-slate-50 border-slate-200/90'}">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-[11px] font-extrabold uppercase tracking-wide ${changed ? 'text-amber-900' : 'text-slate-700'}">${label}</span>
-                        <span class="text-[10px] font-mono-tech text-slate-400">${unit}</span>
+                <div class="p-3 rounded-xl border transition ${changed ? 'bg-amber-50/80 border-amber-300 shadow-2xs' : 'bg-slate-50/90 border-slate-200'}">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[11px] font-extrabold uppercase tracking-wide ${changed ? 'text-amber-950' : 'text-slate-700'}">${label}</span>
+                        <span class="text-[10px] font-mono-tech font-bold px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-500">${unit}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-[9px] font-bold uppercase text-slate-400 mb-0.5">Antes (Base)</label>
                             <input type="number" step="0.1" value="${beforeVal}"
                                 onchange="updateGlueParam(${glueId}, '${beforeKey}', this.value)"
-                                class="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-mono-tech text-slate-600 focus:outline-none focus:border-cyan-600">
+                                class="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-mono-tech text-slate-600 focus:outline-none focus:border-indigo-600">
                         </div>
                         <div>
-                            <label class="block text-[9px] font-bold uppercase ${changed ? 'text-amber-700' : 'text-cyan-700'} mb-0.5">
+                            <label class="block text-[9px] font-extrabold uppercase ${changed ? 'text-amber-700' : 'text-indigo-700'} mb-0.5">
                                 Atual ${changed ? '●' : ''}
                             </label>
-                            <input type="number" step="0.1" value="${currentVal}"
-                                onchange="updateGlueParam(${glueId}, '${currentKey}', this.value)"
-                                class="w-full px-2 py-1 bg-white border ${changed ? 'border-amber-400 font-extrabold text-amber-950' : 'border-cyan-300 font-bold text-slate-900'} rounded-lg text-xs font-mono-tech focus:outline-none focus:border-cyan-600">
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="stepGlueParam(${glueId}, '${currentKey}', -0.1)"
+                                    class="px-1.5 py-1 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg text-xs font-black text-slate-700">-</button>
+                                <input type="number" step="0.1" value="${currentVal}"
+                                    onchange="updateGlueParam(${glueId}, '${currentKey}', this.value)"
+                                    class="w-full px-1.5 py-1 bg-white border ${changed ? 'border-amber-400 font-black text-amber-950' : 'border-indigo-300 font-extrabold text-slate-900'} rounded-lg text-xs font-mono-tech text-center focus:outline-none">
+                                <button type="button" onclick="stepGlueParam(${glueId}, '${currentKey}', 0.1)"
+                                    class="px-1.5 py-1 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg text-xs font-black text-slate-700">+</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1090,26 +1275,26 @@
                 const linkedModels = state.models.filter(m => m.glueRecipeId === g.id);
 
                 return `
-                    <div class="bg-white rounded-2xl shadow-xs border ${modified ? 'border-amber-300' : 'border-slate-200/90'} p-4 flex flex-col justify-between gap-3">
+                    <div class="bg-white rounded-2xl shadow-sm border ${modified ? 'border-amber-300' : 'border-slate-200'} p-4 flex flex-col justify-between gap-3 hover:shadow-md transition">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
                             <div class="flex items-center gap-2 flex-1">
-                                <span class="px-2.5 py-1 rounded-lg font-mono-tech font-extrabold text-xs shrink-0 ${modified ? 'bg-amber-500 text-slate-950' : 'bg-slate-900 text-white'}">
+                                <span class="px-2.5 py-1 rounded-lg font-mono-tech font-black text-xs shrink-0 ${modified ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' : 'bg-gradient-to-r from-slate-800 to-indigo-950 text-white'}">
                                     COLA ${pad2(g.id)}
                                 </span>
                                 <input type="text" value="${escapeHtml(g.name)}" placeholder="Descrição / Nome da Receita de Cola..."
                                     onchange="updateGlueName(${g.id}, this.value)"
-                                    class="w-full text-xs sm:text-sm font-bold text-slate-800 bg-transparent hover:bg-slate-50 focus:bg-slate-50 px-2 py-1 rounded-lg border border-transparent hover:border-slate-200 focus:border-cyan-600 focus:outline-none">
+                                    class="w-full text-xs sm:text-sm font-extrabold text-slate-800 bg-transparent hover:bg-slate-50 focus:bg-slate-50 px-2 py-1 rounded-lg border border-transparent hover:border-slate-200 focus:border-indigo-600 focus:outline-none">
                             </div>
 
                             <div class="flex items-center gap-1.5 shrink-0">
                                 ${modified ? `
-                                    <button onclick="promoteGlueCurrentToBefore(${g.id})" title="Copiar valores ATUAIS para ANTES (Atualizar Baseline)"
-                                        class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg text-[11px] font-bold transition flex items-center gap-1">
+                                    <button onclick="promoteGlueCurrentToBefore(${g.id})" title="Atualizar Baseline (Antes = Atual)"
+                                        class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-950 rounded-lg text-[11px] font-extrabold transition flex items-center gap-1">
                                         <i data-lucide="arrow-left-right" class="w-3 h-3"></i>
                                         Atual → Antes
                                     </button>
                                 ` : `
-                                    <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                    <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                                         Estável
                                     </span>
                                 `}
@@ -1124,11 +1309,11 @@
                         </div>
 
                         <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px]">
-                            <span class="text-slate-400 font-semibold shrink-0">Modelos usando Cola ${pad2(g.id)}:</span>
+                            <span class="text-slate-400 font-bold shrink-0">Modelos vinculados:</span>
                             <div class="flex flex-wrap gap-1 justify-end">
                                 ${linkedModels.length > 0
-                                    ? linkedModels.map(m => `<span class="font-mono-tech font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">${escapeHtml(m.modelCode)}</span>`).join('')
-                                    : '<span class="text-slate-400 italic">Nenhum modelo vinculado</span>'
+                                    ? linkedModels.map(m => `<span class="font-mono-tech font-extrabold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800 border border-indigo-200">${escapeHtml(m.modelCode)}</span>`).join('')
+                                    : '<span class="text-slate-400 italic">Nenhum modelo</span>'
                                 }
                             </div>
                         </div>
@@ -1144,7 +1329,8 @@
             g.name = val.trim();
             saveState();
             renderMatrix();
-            showToast(`Descrição da Receita Cola ${pad2(glueId)} salva!`);
+            populateFilterDropdowns();
+            showToast(`Receita Cola ${pad2(glueId)} salva!`);
         }
 
         function updateGlueParam(glueId, key, rawVal) {
@@ -1155,7 +1341,7 @@
             saveState();
             renderGlueRecipes();
             renderMatrix();
-            showToast(`Parâmetro da Receita Cola ${pad2(glueId)} atualizado!`);
+            showToast(`Parâmetro da Cola ${pad2(glueId)} atualizado!`);
         }
 
         function promoteGlueCurrentToBefore(glueId) {
@@ -1168,9 +1354,12 @@
             saveState();
             renderGlueRecipes();
             renderMatrix();
-            showToast(`Baseline (Antes) da Receita Cola ${pad2(glueId)} atualizado!`);
+            showToast(`Baseline (Antes) da Cola ${pad2(glueId)} atualizado!`);
         }
 
+        // ==========================================
+        // ABA 4: CATÁLOGO DE RECEITAS CLP (50)
+        // ==========================================
         function renderClpRecipes() {
             const tbody = document.getElementById('clpTableBody');
             const search = (document.getElementById('clpSearchInput').value || '').toLowerCase().trim();
@@ -1190,24 +1379,24 @@
             tbody.innerHTML = filtered.map(r => {
                 const linkedModels = state.models.filter(m => m.clpRecipeId === r.id);
                 return `
-                    <tr class="hover:bg-slate-50/90 transition">
-                        <td class="py-2.5 px-4 font-mono-tech font-extrabold text-cyan-800 whitespace-nowrap">
+                    <tr class="hover:bg-indigo-50/40 transition">
+                        <td class="py-2.5 px-4 font-mono-tech font-black text-indigo-800 whitespace-nowrap">
                             CLP ${pad2(r.id)}
                         </td>
                         <td class="py-2.5 px-4">
-                            <input type="text" value="${escapeHtml(r.name)}" placeholder="Nome / Descrição da Receita CLP ${pad2(r.id)}..."
+                            <input type="text" value="${escapeHtml(r.name)}" placeholder="Descrição da Receita CLP ${pad2(r.id)}..."
                                 onchange="updateClpField(${r.id}, 'name', this.value)"
-                                class="w-full px-2.5 py-1.5 bg-slate-50 hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-cyan-600 rounded-lg text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none transition">
+                                class="w-full px-2.5 py-1.5 bg-slate-50 hover:bg-white focus:bg-white border border-transparent hover:border-indigo-200 focus:border-indigo-600 rounded-lg text-xs sm:text-sm font-bold text-slate-800 focus:outline-none transition">
                         </td>
                         <td class="py-2.5 px-4">
-                            <input type="text" value="${escapeHtml(r.notes)}" placeholder="Observações técnicas (ciclo, bico, linha)..."
+                            <input type="text" value="${escapeHtml(r.notes)}" placeholder="Observações técnicas..."
                                 onchange="updateClpField(${r.id}, 'notes', this.value)"
-                                class="w-full px-2.5 py-1.5 bg-slate-50 hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-cyan-600 rounded-lg text-xs text-slate-600 focus:outline-none transition">
+                                class="w-full px-2.5 py-1.5 bg-slate-50 hover:bg-white focus:bg-white border border-transparent hover:border-indigo-200 focus:border-indigo-600 rounded-lg text-xs text-slate-600 focus:outline-none transition">
                         </td>
                         <td class="py-2.5 px-4 text-center">
                             ${linkedModels.length > 0
                                 ? `<div class="inline-flex flex-wrap justify-center gap-1">
-                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-cyan-100 text-cyan-800">${linkedModels.length} modelo(s)</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-100 text-indigo-800">${linkedModels.length} mod.</span>
                                     <span class="text-[11px] font-mono-tech text-slate-500">(${linkedModels.map(m => m.modelCode).join(', ')})</span>
                                    </div>`
                                 : `<span class="text-[11px] text-slate-400">Livre</span>`
@@ -1215,7 +1404,7 @@
                         </td>
                         <td class="py-2.5 px-4 text-right whitespace-nowrap">
                             <button onclick="openModelModalWithClp(${r.id})"
-                                class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-100 hover:bg-cyan-600 text-slate-700 hover:text-white rounded-lg text-xs font-bold transition">
+                                class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white rounded-lg text-xs font-extrabold transition">
                                 <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                                 <span>+ Modelo</span>
                             </button>
@@ -1236,6 +1425,9 @@
             showToast(`Receita CLP ${pad2(clpId)} atualizada!`);
         }
 
+        // ==========================================
+        // EXPORTAÇÃO CSV & BACKUP JSON
+        // ==========================================
         function exportMatrixCSV() {
             const filtered = getFilteredModels();
             let csv = "data:text/csv;charset=utf-8,\uFEFF";
@@ -1356,7 +1548,7 @@
             saveState();
             closeModal('resetModal');
             refreshAllViews();
-            showToast('Todos os modelos foram limpos (50 CLP e 20 Cola zeradas).');
+            showToast('Todos os modelos foram limpos.');
         }
 
         function escapeHtml(str) {
