@@ -1,1 +1,1421 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Modelos & Receitas de Processo (CLP + Cola)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono-tech { font-family: 'JetBrains Mono', monospace; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { opacity: 1; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
 
+    <!-- ========================================== -->
+    <!-- CABEÇALHO INDUSTRIAL & NAVEGAÇÃO PRINCIPAL -->
+    <!-- ========================================== -->
+    <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between py-3.5 gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-cyan-500/15 border border-cyan-500/30 rounded-xl text-cyan-400 shrink-0">
+                        <i data-lucide="cpu" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white">
+                                Gestão de Modelos & Receitas de Processo (CLP + Cola)
+                            </h1>
+                            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono-tech font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                                CHÃO DE FÁBRICA v2.0
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400">Controle de engenharia: Vínculo Modelos CLP × Receitas CLP (01–50) × Dosagem de Cola (01–20)</p>
+                    </div>
+                </div>
+
+                <!-- Ações Globais de Backup / Reset -->
+                <div class="flex items-center gap-2 self-start md:self-auto">
+                    <label title="Importar Backup JSON" class="cursor-pointer flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-700 transition">
+                        <i data-lucide="upload" class="w-3.5 h-3.5 text-cyan-400"></i>
+                        <span>Importar JSON</span>
+                        <input type="file" id="importJsonInput" accept=".json" onchange="importJSONBackup(event)" class="hidden">
+                    </label>
+                    <button onclick="exportJSONBackup()" title="Exportar Backup Completo JSON"
+                        class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-700 transition">
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-cyan-400"></i>
+                        <span class="hidden sm:inline">Backup JSON</span>
+                    </button>
+                    <button onclick="openResetModal()" title="Restaurar Padrão ou Limpar"
+                        class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Abas Principais -->
+            <nav class="flex space-x-1.5 overflow-x-auto pb-2.5 pt-1 no-scrollbar" id="mainNavTabs">
+                <button onclick="switchTab('matrix')" data-tab="matrix"
+                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap bg-cyan-500 text-slate-950 shadow-sm">
+                    <i data-lucide="table-2" class="w-4 h-4"></i>
+                    Matriz de Modelos (CLP x Cola)
+                </button>
+                <button onclick="switchTab('glue')" data-tab="glue"
+                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="droplet" class="w-4 h-4 text-amber-400"></i>
+                    Parâmetros das Receitas de Cola (20 Receitas)
+                </button>
+                <button onclick="switchTab('clp')" data-tab="clp"
+                    class="nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i>
+                    Catálogo de Receitas CLP (50 Receitas)
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- PAINEL DE KPIs COMPACTOS                   -->
+    <!-- ========================================== -->
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-5">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <!-- KPI 1: Total de Modelos -->
+            <div onclick="switchTab('matrix')" class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200/90 hover:border-cyan-400 transition cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total de Modelos</span>
+                    <i data-lucide="layers" class="w-4 h-4 text-cyan-600"></i>
+                </div>
+                <div class="flex items-baseline justify-between mt-1.5">
+                    <span id="kpiTotalModels" class="text-2xl font-extrabold text-slate-900 font-mono-tech">0</span>
+                    <span id="kpiModelsMultiSub" class="text-[11px] font-medium text-slate-500">0 receitas ativas</span>
+                </div>
+            </div>
+
+            <!-- KPI 2: Modelos Validados (%) -->
+            <div onclick="setStatusFilterAndGo('VALIDATED')" class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200/90 hover:border-emerald-400 transition cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Modelos Validados</span>
+                    <span id="kpiValidatedPctBadge" class="text-[10px] font-mono-tech font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">0%</span>
+                </div>
+                <div class="flex items-baseline justify-between mt-1.5">
+                    <span id="kpiValidatedCount" class="text-2xl font-extrabold text-emerald-600 font-mono-tech">0 / 0</span>
+                    <span id="kpiPendingCount" class="text-[11px] font-semibold text-amber-600">0 pendentes</span>
+                </div>
+            </div>
+
+            <!-- KPI 3: Receitas de CLP (1 a 50) -->
+            <div onclick="switchTab('clp')" class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200/90 hover:border-cyan-400 transition cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Receitas CLP (01–50)</span>
+                    <i data-lucide="cpu" class="w-4 h-4 text-slate-600"></i>
+                </div>
+                <div class="flex items-baseline justify-between mt-1.5">
+                    <span id="kpiClpConfigured" class="text-2xl font-extrabold text-slate-900 font-mono-tech">0 / 50</span>
+                    <span class="text-[11px] text-slate-500">configuradas</span>
+                </div>
+            </div>
+
+            <!-- KPI 4: Receitas de Cola (1 a 20) -->
+            <div onclick="switchTab('glue')" class="bg-white p-3.5 rounded-2xl shadow-xs border border-slate-200/90 hover:border-amber-400 transition cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Receitas Cola (01–20)</span>
+                    <i data-lucide="droplet" class="w-4 h-4 text-amber-500"></i>
+                </div>
+                <div class="flex items-baseline justify-between mt-1.5">
+                    <span id="kpiGlueConfigured" class="text-2xl font-extrabold text-slate-900 font-mono-tech">0 / 20</span>
+                    <span id="kpiGlueChangedBadge" class="text-[11px] font-semibold text-amber-600">0 alteradas</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CONTEÚDO PRINCIPAL                         -->
+    <!-- ========================================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
+
+        <!-- Toast de Feedback -->
+        <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+            <div class="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-3">
+                <i id="toastIcon" data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
+                <p id="toastMessage" class="text-xs sm:text-sm font-medium">Alteração salva!</p>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ABA 1: MATRIZ DE MODELOS (CLP x COLA)                        -->
+        <!-- ============================================================ -->
+        <section id="tab-matrix" class="tab-section space-y-4">
+            
+            <!-- Barra de Ferramentas: Busca, Filtros, Modo de Exibição, Novo Modelo e CSV -->
+            <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200/90 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2.5 flex-1">
+                    <!-- Campo de Busca -->
+                    <div class="relative flex-1 min-w-[200px] max-w-xs">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="matrixSearchInput" oninput="renderMatrix()" placeholder="Buscar modelo ou receita..."
+                            class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-cyan-600 focus:bg-white">
+                    </div>
+
+                    <!-- Filtro por Status -->
+                    <select id="matrixStatusFilter" onchange="renderMatrix()"
+                        class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-cyan-600">
+                        <option value="ALL">Status: Todos</option>
+                        <option value="VALIDATED">✅ Validados</option>
+                        <option value="PENDING">⏳ Pendentes</option>
+                    </select>
+
+                    <!-- Filtro por Receita CLP (1 a 50) -->
+                    <select id="matrixClpFilter" onchange="renderMatrix()"
+                        class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:border-cyan-600">
+                        <option value="ALL">Receita CLP: Todas (01–50)</option>
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+
+                <!-- Controles Direita: Modo Agrupado vs Plana, CSV e + Novo Modelo -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Toggle Visualização Agrupada vs Lista Plana -->
+                    <div class="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                        <button type="button" onclick="setMatrixViewMode('grouped')" id="btnViewGrouped"
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-900 text-white shadow-xs flex items-center gap-1.5" title="Agrupar modelos dentro da mesma Receita CLP">
+                            <i data-lucide="folder-tree" class="w-3.5 h-3.5"></i>
+                            <span>Agrupado CLP</span>
+                        </button>
+                        <button type="button" onclick="setMatrixViewMode('flat')" id="btnViewFlat"
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900 flex items-center gap-1.5" title="Visualizar em tabela única contínua">
+                            <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                            <span>Lista Plana</span>
+                        </button>
+                    </div>
+
+                    <button onclick="exportMatrixCSV()"
+                        class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold px-3 py-2 rounded-xl border border-slate-200 transition">
+                        <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
+                        <span>Exportar CSV</span>
+                    </button>
+
+                    <button onclick="openModelModal()"
+                        class="flex items-center gap-1.5 bg-cyan-600 hover:bg-cyan-700 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-xs transition">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>+ Novo Modelo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Container da Matriz (Agrupada ou Plana) -->
+            <div id="matrixContentContainer" class="space-y-4">
+                <!-- Preenchido via JS -->
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- ABA 2: PARÂMETROS DAS RECEITAS DE COLA (20 RECEITAS)         -->
+        <!-- ============================================================ -->
+        <section id="tab-glue" class="tab-section hidden space-y-4">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="droplet" class="w-5 h-5 text-amber-500"></i>
+                        Parâmetros das Receitas de Cola (Receita 01 a 20)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                        Edição inline em tempo real. Compare <strong>ANTES (Baseline)</strong> vs <strong>ATUAL (Vigente)</strong> para Pressão Inicial, Dosador 1, Dosador 2 e Fluxo.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="glueSearchInput" oninput="renderGlueRecipes()" placeholder="Filtrar receita cola..."
+                            class="pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-cyan-600">
+                    </div>
+                    <button onclick="exportGlueCSV()" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-200 transition">
+                        <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
+                        <span>CSV Cola</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid/Cards das 20 Receitas de Cola -->
+            <div id="glueRecipesContainer" class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <!-- Preenchido via JS (Receita Cola 01 até 20) -->
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- ABA 3: CATÁLOGO DE RECEITAS CLP (50 RECEITAS)                -->
+        <!-- ============================================================ -->
+        <section id="tab-clp" class="tab-section hidden space-y-4">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-5 h-5 text-cyan-600"></i>
+                        Catálogo de Receitas CLP (Receita 01 a 50)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                        Cadastre a descrição técnica de cada programa/receita do CLP e visualize quantos modelos estão vinculados.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="clpSearchInput" oninput="renderClpRecipes()" placeholder="Buscar receita CLP..."
+                            class="pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:border-cyan-600">
+                    </div>
+                    <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 cursor-pointer">
+                        <input type="checkbox" id="clpOnlyUsedCheck" onchange="renderClpRecipes()" class="rounded text-cyan-600">
+                        <span>Só com modelos</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Tabela das 50 Receitas CLP -->
+            <div class="bg-white rounded-2xl shadow-xs border border-slate-200/90 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-200 text-[11px] font-bold uppercase tracking-wider">
+                                <th class="py-3 px-4 w-28">Receita CLP</th>
+                                <th class="py-3 px-4">Nome / Descrição do Programa CLP</th>
+                                <th class="py-3 px-4">Observações Técnicas / Observação Linha</th>
+                                <th class="py-3 px-4 text-center">Modelos Vinculados</th>
+                                <th class="py-3 px-4 text-right">Ação Rápida</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clpTableBody" class="divide-y divide-slate-200/80 text-xs sm:text-sm">
+                            <!-- Preenchido via JS (Receitas 01 a 50) -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- MODAL CADASTRO / EDIÇÃO DE MODELO CLP      -->
+    <!-- ========================================== -->
+    <div id="modelModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 id="modelModalTitle" class="text-lg font-extrabold text-slate-900">Novo Modelo CLP</h3>
+                <button onclick="closeModal('modelModal')" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form onsubmit="saveModelForm(event)" class="space-y-4 mt-4">
+                <input type="hidden" id="editModelId">
+                
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">1. Código / Nome do Modelo CLP *</label>
+                    <input type="text" id="modelCodeInput" placeholder="Ex: 9XS-A, 9XS-B, MOD-440..." required
+                        class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono-tech font-bold text-slate-900 focus:outline-none focus:border-cyan-600 focus:bg-white">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">2. Receita CLP (01 a 50) *</label>
+                        <select id="modelClpSelect" required
+                            class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:border-cyan-600">
+                            <!-- Preenchido via JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 mb-1">3. Receita Cola Atual (01 a 20) *</label>
+                        <select id="modelGlueSelect" required
+                            class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:border-cyan-600">
+                            <!-- Preenchido via JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">4. Receita Cola Antiga (Histórico)</label>
+                    <select id="modelOldGlueSelect"
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-cyan-600">
+                        <!-- Preenchido via JS -->
+                    </select>
+                    <p class="text-[11px] text-slate-400 mt-1">Mantém o registro da receita de cola utilizada anteriormente neste modelo.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Observação / Nota de Engenharia (Opcional)</label>
+                    <input type="text" id="modelNoteInput" placeholder="Ex: Variante com bico 1.2mm, lote piloto..."
+                        class="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-cyan-600">
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <div>
+                        <span class="text-sm font-bold text-slate-800">Status de Validação</span>
+                        <p class="text-xs text-slate-500">Marque se os parâmetros já foram aprovados em linha</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="modelValidatedInput" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('modelModal')" class="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 text-xs sm:text-sm font-bold bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl shadow-xs">Salvar Modelo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL RESET / RESTAURAR DADOS              -->
+    <!-- ========================================== -->
+    <div id="resetModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-extrabold text-slate-900">Gerenciar Dados Locais</h3>
+                <button onclick="closeModal('resetModal')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-600">
+                Todos os modelos e parâmetros das 50 receitas CLP e 20 receitas de Cola são salvos automaticamente no navegador (<code class="font-mono-tech bg-slate-100 px-1 rounded">localStorage</code>).
+            </p>
+            <div class="space-y-2.5 pt-2">
+                <button onclick="restoreIndustrialSeed()" class="w-full py-2.5 px-4 bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-200 font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    Restaurar Dados Industriais de Exemplo
+                </button>
+                <button onclick="clearAllModelsAndReset()" class="w-full py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    Limpar Todos os Modelos (Manter Estrutura 50 CLP / 20 Cola)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCRIPT PRINCIPAL DA APLICAÇÃO              -->
+    <!-- ========================================== -->
+    <script>
+        const STORAGE_KEY = 'eng_process_clp_cola_v2';
+
+        // Estado Global
+        let state = {
+            models: [],       // { id, modelCode, clpRecipeId, glueRecipeId, validated, validatedAt, note }
+            clpRecipes: [],   // 1..50: { id, name, notes }
+            glueRecipes: []   // 1..20: { id, name, pressureBefore, pressureCurrent, doser1Before, doser1Current, doser2Before, doser2Current, flowBefore, flowCurrent }
+        };
+
+        let matrixViewMode = 'grouped'; // 'grouped' ou 'flat'
+
+        // ==========================================
+        // INICIALIZAÇÃO E PERSISTÊNCIA LOCAL
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            populateFilterDropdowns();
+            refreshAllViews();
+            lucide.createIcons();
+        });
+
+        function createEmptyStructures() {
+            const clp = [];
+            for (let i = 1; i <= 50; i++) {
+                clp.push({ id: i, name: '', notes: '' });
+            }
+            const glue = [];
+            for (let i = 1; i <= 20; i++) {
+                glue.push({
+                    id: i,
+                    name: '',
+                    pressureBefore: 0,
+                    pressureCurrent: 0,
+                    doser1Before: 0,
+                    doser1Current: 0,
+                    doser2Before: 0,
+                    doser2Current: 0,
+                    flowBefore: 0,
+                    flowCurrent: 0
+                });
+            }
+            return { clp, glue };
+        }
+
+        function seedRealisticIndustrialData() {
+            const { clp, glue } = createEmptyStructures();
+
+            // Configurar algumas Receitas CLP realistas (de 1 a 50)
+            clp[0] = { id: 1, name: 'Programa Padrão Linha A - Família 9XS', notes: 'Ciclo 14.5s | Trajetória contínua perímetro externo' };
+            clp[1] = { id: 2, name: 'Programa Alta Velocidade - Família 7XT', notes: 'Ciclo 11.2s | Dupla camada nos cantos' };
+            clp[2] = { id: 3, name: 'Programa Peças Estruturais - Série HD', notes: 'Ciclo 18.0s | Pré-aquecimento ativado' };
+            clp[3] = { id: 4, name: 'Programa Vedação Fina - Linha Compact', notes: 'Ciclo 9.8s | Bico agulha 0.8mm' };
+            clp[4] = { id: 5, name: 'Programa Exportação / Alta Viscosidade', notes: 'Ciclo 16.4s | Purga automática a cada 25 ciclos' };
+
+            // Configurar algumas Receitas de Cola realistas (de 1 a 20)
+            glue[0] = {
+                id: 1, name: 'Adesivo PU Estrutural - Padrão 9XS',
+                pressureBefore: 3.2, pressureCurrent: 3.4,
+                doser1Before: 48.0, doser1Current: 50.5,
+                doser2Before: 48.0, doser2Current: 50.5,
+                flowBefore: 12.4, flowCurrent: 13.1
+            };
+            glue[1] = {
+                id: 2, name: 'Adesivo Bicomponente Rápido - 7XT',
+                pressureBefore: 4.0, pressureCurrent: 4.0,
+                doser1Before: 60.0, doser1Current: 60.0,
+                doser2Before: 30.0, doser2Current: 30.0,
+                flowBefore: 18.5, flowCurrent: 18.5
+            };
+            glue[2] = {
+                id: 3, name: 'Selante Alta Viscosidade - Série HD',
+                pressureBefore: 5.1, pressureCurrent: 5.5,
+                doser1Before: 72.0, doser1Current: 75.0,
+                doser2Before: 72.0, doser2Current: 75.0,
+                flowBefore: 22.0, flowCurrent: 24.2
+            };
+            glue[3] = {
+                id: 4, name: 'Micro-dosagem Precisão - Compact',
+                pressureBefore: 2.1, pressureCurrent: 2.1,
+                doser1Before: 25.0, doser1Current: 25.0,
+                doser2Before: 25.0, doser2Current: 25.0,
+                flowBefore: 6.8, flowCurrent: 6.8
+            };
+
+            const todayStr = new Date().toLocaleDateString('pt-BR');
+
+            // Vários modelos compartilhando a mesma Receita CLP e Receita Cola
+            const models = [
+                { id: 'm1', modelCode: '9XS-A', clpRecipeId: 1, glueRecipeId: 1, oldGlueRecipeId: null, validated: true, validatedAt: todayStr, note: 'Versão base validada em produção' },
+                { id: 'm2', modelCode: '9XS-B', clpRecipeId: 1, glueRecipeId: 1, oldGlueRecipeId: 4, validated: true, validatedAt: todayStr, note: 'Migrado da Cola 04 para Cola 01' },
+                { id: 'm3', modelCode: '9XS-C', clpRecipeId: 1, glueRecipeId: 1, oldGlueRecipeId: null, validated: false, validatedAt: '', note: 'Aguardando aprovação qualidade turno B' },
+                { id: 'm4', modelCode: '9XS-D (Export)', clpRecipeId: 1, glueRecipeId: 3, oldGlueRecipeId: 1, validated: false, validatedAt: '', note: 'Usa CLP 01 com cola de alta viscosidade 03 (antes Cola 01)' },
+                { id: 'm5', modelCode: '7XT-100', clpRecipeId: 2, glueRecipeId: 2, oldGlueRecipeId: null, validated: true, validatedAt: todayStr, note: 'Linha 2 - Turno A/B' },
+                { id: 'm6', modelCode: '7XT-200', clpRecipeId: 2, glueRecipeId: 2, oldGlueRecipeId: null, validated: true, validatedAt: todayStr, note: 'Mesma receita CLP 02 e Cola 02' },
+                { id: 'm7', modelCode: 'HD-900-PRO', clpRecipeId: 3, glueRecipeId: 3, oldGlueRecipeId: 2, validated: false, validatedAt: '', note: 'Ajuste fino de fluxo em andamento' },
+                { id: 'm8', modelCode: 'CMP-12', clpRecipeId: 4, glueRecipeId: 4, oldGlueRecipeId: null, validated: true, validatedAt: todayStr, note: 'Homologado engenharia' }
+            ];
+
+            state = { models, clpRecipes: clp, glueRecipes: glue };
+            saveState();
+        }
+
+        function loadState() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+                seedRealisticIndustrialData();
+                return;
+            }
+            try {
+                const parsed = JSON.parse(raw);
+                const { clp, glue } = createEmptyStructures();
+
+                // Garantir exatamente 50 receitas CLP e 20 receitas Cola
+                const mergedClp = clp.map(base => {
+                    const found = (parsed.clpRecipes || []).find(item => item.id === base.id);
+                    return found ? { ...base, ...found } : base;
+                });
+
+                const mergedGlue = glue.map(base => {
+                    const found = (parsed.glueRecipes || []).find(item => item.id === base.id);
+                    return found ? { ...base, ...found } : base;
+                });
+
+                state = {
+                    models: Array.isArray(parsed.models) ? parsed.models : [],
+                    clpRecipes: mergedClp,
+                    glueRecipes: mergedGlue
+                };
+            } catch (e) {
+                console.error('Erro ao carregar localStorage:', e);
+                seedRealisticIndustrialData();
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            updateKPIs();
+        }
+
+        // ==========================================
+        // HELPERS DE FORMATAÇÃO E TOAST
+        // ==========================================
+        function pad2(num) {
+            return String(num).padStart(2, '0');
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMessage');
+            const iconEl = document.getElementById('toastIcon');
+            msgEl.textContent = msg;
+            iconEl.className = type === 'error' ? 'w-5 h-5 text-rose-400' : 'w-5 h-5 text-emerald-400';
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2800);
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                if (btn.dataset.tab === tabName) {
+                    btn.className = 'nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap bg-cyan-500 text-slate-950 shadow-sm';
+                } else {
+                    btn.className = 'nav-tab-btn flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition whitespace-nowrap text-slate-300 hover:bg-slate-800 hover:text-white';
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function setStatusFilterAndGo(status) {
+            switchTab('matrix');
+            document.getElementById('matrixStatusFilter').value = status;
+            renderMatrix();
+        }
+
+        function populateFilterDropdowns() {
+            const clpFilter = document.getElementById('matrixClpFilter');
+            clpFilter.innerHTML = `<option value="ALL">Receita CLP: Todas (01–50)</option>` +
+                state.clpRecipes.map(r => {
+                    const label = r.name ? `Receita CLP ${pad2(r.id)} — ${r.name}` : `Receita CLP ${pad2(r.id)}`;
+                    return `<option value="${r.id}">${label}</option>`;
+                }).join('');
+        }
+
+        // ==========================================
+        // ATUALIZAÇÃO DE KPIs E VIEWS
+        // ==========================================
+        function updateKPIs() {
+            const totalModels = state.models.length;
+            const validatedModels = state.models.filter(m => m.validated).length;
+            const pendingModels = totalModels - validatedModels;
+            const pct = totalModels > 0 ? Math.round((validatedModels / totalModels) * 100) : 0;
+
+            const activeClpSet = new Set(state.models.map(m => m.clpRecipeId));
+            const configuredClpCount = state.clpRecipes.filter(r => r.name.trim() !== '' || activeClpSet.has(r.id)).length;
+
+            const activeGlueSet = new Set(state.models.map(m => m.glueRecipeId));
+            const configuredGlueCount = state.glueRecipes.filter(g => 
+                g.name.trim() !== '' || g.pressureCurrent > 0 || g.doser1Current > 0 || g.doser2Current > 0 || g.flowCurrent > 0 || activeGlueSet.has(g.id)
+            ).length;
+
+            const changedGlueCount = state.glueRecipes.filter(g => isGlueRecipeModified(g)).length;
+
+            document.getElementById('kpiTotalModels').textContent = totalModels;
+            document.getElementById('kpiModelsMultiSub').textContent = `${activeClpSet.size} receitas CLP em uso`;
+            document.getElementById('kpiValidatedCount').textContent = `${validatedModels} / ${totalModels}`;
+            document.getElementById('kpiValidatedPctBadge').textContent = `${pct}%`;
+            document.getElementById('kpiPendingCount').textContent = `${pendingModels} pendente(s)`;
+            document.getElementById('kpiClpConfigured').textContent = `${configuredClpCount} / 50`;
+            document.getElementById('kpiGlueConfigured').textContent = `${configuredGlueCount} / 20`;
+            document.getElementById('kpiGlueChangedBadge').textContent = `${changedGlueCount} alterada(s)`;
+        }
+
+        function refreshAllViews() {
+            updateKPIs();
+            populateFilterDropdowns();
+            renderMatrix();
+            renderGlueRecipes();
+            renderClpRecipes();
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // ABA 1: MATRIZ DE MODELOS (CLP x COLA)
+        // ==========================================
+        function setMatrixViewMode(mode) {
+            matrixViewMode = mode;
+            const btnGrouped = document.getElementById('btnViewGrouped');
+            const btnFlat = document.getElementById('btnViewFlat');
+
+            if (mode === 'grouped') {
+                btnGrouped.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-900 text-white shadow-xs flex items-center gap-1.5';
+                btnFlat.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900 flex items-center gap-1.5';
+            } else {
+                btnFlat.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-900 text-white shadow-xs flex items-center gap-1.5';
+                btnGrouped.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900 flex items-center gap-1.5';
+            }
+            renderMatrix();
+            lucide.createIcons();
+        }
+
+        function getFilteredModels() {
+            const search = (document.getElementById('matrixSearchInput').value || '').toLowerCase().trim();
+            const status = document.getElementById('matrixStatusFilter').value;
+            const clpFilter = document.getElementById('matrixClpFilter').value;
+
+            return state.models.filter(m => {
+                if (status === 'VALIDATED' && !m.validated) return false;
+                if (status === 'PENDING' && m.validated) return false;
+                if (clpFilter !== 'ALL' && String(m.clpRecipeId) !== clpFilter) return false;
+
+                if (search) {
+                    const clpObj = state.clpRecipes.find(c => c.id === m.clpRecipeId) || { name: '' };
+                    const glueObj = state.glueRecipes.find(g => g.id === m.glueRecipeId) || { name: '' };
+                    const oldGlueObj = m.oldGlueRecipeId ? (state.glueRecipes.find(g => g.id === Number(m.oldGlueRecipeId)) || { name: '' }) : { name: '' };
+                    const oldGlueText = m.oldGlueRecipeId ? `receita cola antiga ${pad2(m.oldGlueRecipeId)} ${oldGlueObj.name}` : '';
+                    const haystack = `${m.modelCode} ${m.note || ''} receita clp ${pad2(m.clpRecipeId)} ${clpObj.name} receita cola ${pad2(m.glueRecipeId)} ${glueObj.name} ${oldGlueText}`.toLowerCase();
+                    if (!haystack.includes(search)) return false;
+                }
+                return true;
+            });
+        }
+
+        function buildGlueSummarySnippet(glueId) {
+            const g = state.glueRecipes.find(item => item.id === Number(glueId));
+            if (!g) return '';
+            const modified = isGlueRecipeModified(g);
+            return `
+                <div class="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] font-mono-tech ${modified ? 'text-amber-700' : 'text-slate-500'}">
+                    <span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title="Pressão Inicial Atual">P: <strong>${g.pressureCurrent}</strong></span>
+                    <span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title="Dosador 1 Atual">D1: <strong>${g.doser1Current}</strong></span>
+                    <span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title="Dosador 2 Atual">D2: <strong>${g.doser2Current}</strong></span>
+                    <span class="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title="Fluxo Atual">Flx: <strong>${g.flowCurrent}</strong></span>
+                </div>
+            `;
+        }
+
+        function buildModelTableRow(m) {
+            const clpOptions = state.clpRecipes.map(r => {
+                const desc = r.name ? ` - ${r.name}` : '';
+                return `<option value="${r.id}" ${r.id === m.clpRecipeId ? 'selected' : ''}>CLP ${pad2(r.id)}${desc}</option>`;
+            }).join('');
+
+            const glueOptions = state.glueRecipes.map(g => {
+                const desc = g.name ? ` - ${g.name}` : '';
+                return `<option value="${g.id}" ${g.id === m.glueRecipeId ? 'selected' : ''}>Cola ${pad2(g.id)}${desc}</option>`;
+            }).join('');
+
+            const oldGlueIdNum = m.oldGlueRecipeId ? Number(m.oldGlueRecipeId) : '';
+            const oldGlueOptions = `<option value="" ${!oldGlueIdNum ? 'selected' : ''}>— Nenhuma / Sem histórico —</option>` +
+                state.glueRecipes.map(g => {
+                    const desc = g.name ? ` - ${g.name}` : '';
+                    return `<option value="${g.id}" ${g.id === oldGlueIdNum ? 'selected' : ''}>Cola ${pad2(g.id)}${desc}</option>`;
+                }).join('');
+
+            const glueObj = state.glueRecipes.find(g => g.id === m.glueRecipeId);
+            const glueTooltip = glueObj 
+                ? `Receita Cola ${pad2(glueObj.id)}${glueObj.name ? ' (' + glueObj.name + ')' : ''} | Pressão: ${glueObj.pressureCurrent} | Dos1: ${glueObj.doser1Current} | Dos2: ${glueObj.doser2Current} | Fluxo: ${glueObj.flowCurrent}`
+                : '';
+
+            return `
+                <tr class="hover:bg-slate-50/90 transition group">
+                    <!-- Coluna 1: Modelo CLP (Editável inline) -->
+                    <td class="py-3 px-4 align-top">
+                        <input type="text" value="${escapeHtml(m.modelCode)}"
+                            onchange="inlineUpdateModel('${m.id}', 'modelCode', this.value)"
+                            class="w-full max-w-[170px] font-mono-tech font-bold text-sm text-slate-900 bg-transparent hover:bg-white focus:bg-white px-2 py-1 rounded-lg border border-transparent hover:border-slate-300 focus:border-cyan-600 focus:outline-none transition"
+                            title="Clique para editar o código do modelo">
+                        ${m.note ? `<p class="text-[11px] text-slate-400 px-2 mt-0.5 truncate max-w-[190px]" title="${escapeHtml(m.note)}">${escapeHtml(m.note)}</p>` : ''}
+                    </td>
+
+                    <!-- Coluna 2: Receita CLP (Seletor 1 a 50) -->
+                    <td class="py-3 px-4 align-top">
+                        <select onchange="inlineUpdateModel('${m.id}', 'clpRecipeId', Number(this.value))"
+                            class="w-full max-w-[230px] bg-cyan-50/60 hover:bg-cyan-50 border border-cyan-200/80 text-slate-800 text-xs font-semibold rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-cyan-600 cursor-pointer">
+                            ${clpOptions}
+                        </select>
+                    </td>
+
+                    <!-- Coluna 3: Receita Cola Atual (Seletor 1 a 20 + Resumo rápido) -->
+                    <td class="py-3 px-4 align-top" title="${escapeHtml(glueTooltip)}">
+                        <select onchange="inlineUpdateModel('${m.id}', 'glueRecipeId', Number(this.value))"
+                            class="w-full max-w-[230px] bg-amber-50/60 hover:bg-amber-50 border border-amber-200/80 text-slate-800 text-xs font-semibold rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-amber-500 cursor-pointer">
+                            ${glueOptions}
+                        </select>
+                        ${buildGlueSummarySnippet(m.glueRecipeId)}
+                    </td>
+
+                    <!-- Coluna 4: Receita Cola Antiga (Histórico) -->
+                    <td class="py-3 px-4 align-top">
+                        <div class="flex items-center gap-1.5">
+                            <select onchange="inlineUpdateModel('${m.id}', 'oldGlueRecipeId', this.value ? Number(this.value) : null)"
+                                class="w-full max-w-[210px] ${oldGlueIdNum ? 'bg-slate-100 border-slate-300 text-slate-700' : 'bg-slate-50 border-slate-200 text-slate-400'} hover:bg-white text-xs font-semibold rounded-xl px-2.5 py-1.5 border focus:outline-none focus:border-slate-500 cursor-pointer">
+                                ${oldGlueOptions}
+                            </select>
+                            ${oldGlueIdNum && oldGlueIdNum !== m.glueRecipeId ? `
+                                <button type="button" onclick="restoreOldGlueRecipe('${m.id}')" title="Restaurar Receita Cola Antiga (${pad2(oldGlueIdNum)}) como Atual"
+                                    class="p-1.5 bg-slate-100 hover:bg-amber-100 text-slate-600 hover:text-amber-800 rounded-lg border border-slate-200 transition shrink-0">
+                                    <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                        ${oldGlueIdNum ? `<span class="block text-[10px] text-slate-400 mt-1 font-mono-tech">Anterior: Cola ${pad2(oldGlueIdNum)}</span>` : ''}
+                    </td>
+
+                    <!-- Coluna 5: Validado (Toggle interativo com data/status) -->
+                    <td class="py-3 px-4 align-top">
+                        <button type="button" onclick="toggleModelValidated('${m.id}')"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition ${
+                                m.validated
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
+                                    : 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+                            }">
+                            <i data-lucide="${m.validated ? 'check-circle-2' : 'clock'}" class="w-3.5 h-3.5"></i>
+                            <span>${m.validated ? 'Validado' : 'Pendente'}</span>
+                        </button>
+                        ${m.validated && m.validatedAt ? `<span class="block text-[10px] text-slate-400 mt-1 font-mono-tech">Em: ${m.validatedAt}</span>` : ''}
+                    </td>
+
+                    <!-- Coluna 6: Ações -->
+                    <td class="py-3 px-4 align-top text-right whitespace-nowrap">
+                        <div class="inline-flex items-center gap-1">
+                            <button onclick="openModelModal('${m.id}')" title="Editar Detalhes do Modelo"
+                                class="p-1.5 text-slate-500 hover:text-cyan-700 hover:bg-cyan-50 rounded-lg transition">
+                                <i data-lucide="pencil" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="duplicateModel('${m.id}')" title="Duplicar Modelo na mesma Receita CLP"
+                                class="p-1.5 text-slate-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition">
+                                <i data-lucide="copy-plus" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteModel('${m.id}')" title="Excluir Modelo"
+                                class="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function renderMatrix() {
+            const container = document.getElementById('matrixContentContainer');
+            const filtered = getFilteredModels();
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl p-10 text-center border border-slate-200/90 shadow-xs">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                            <i data-lucide="search-x" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800">Nenhum modelo encontrado</h3>
+                        <p class="text-xs text-slate-500 mt-1">Ajuste os filtros acima ou clique em "+ Novo Modelo" para cadastrar.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            if (matrixViewMode === 'flat') {
+                // Visualização em Lista Plana
+                const sorted = [...filtered].sort((a, b) => a.clpRecipeId - b.clpRecipeId || a.modelCode.localeCompare(b.modelCode));
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl shadow-xs border border-slate-200/90 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-900 text-slate-200 text-[11px] font-bold uppercase tracking-wider">
+                                        <th class="py-3 px-4">1. Modelo CLP</th>
+                                        <th class="py-3 px-4">2. Receita CLP (01–50)</th>
+                                        <th class="py-3 px-4">3. Receita Cola Atual (01–20)</th>
+                                        <th class="py-3 px-4">4. Receita Cola Antiga (Histórico)</th>
+                                        <th class="py-3 px-4">5. Validado</th>
+                                        <th class="py-3 px-4 text-right">6. Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200/80 text-xs sm:text-sm">
+                                    ${sorted.map(m => buildModelTableRow(m)).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Visualização Agrupada por Receita CLP (mostrando vários modelos dentro da mesma receita)
+                const groupsMap = new Map();
+                filtered.forEach(m => {
+                    if (!groupsMap.has(m.clpRecipeId)) groupsMap.set(m.clpRecipeId, []);
+                    groupsMap.get(m.clpRecipeId).push(m);
+                });
+
+                const sortedClpIds = Array.from(groupsMap.keys()).sort((a, b) => a - b);
+
+                container.innerHTML = sortedClpIds.map(clpId => {
+                    const groupModels = groupsMap.get(clpId);
+                    const clpInfo = state.clpRecipes.find(c => c.id === clpId) || { name: '', notes: '' };
+                    const validCount = groupModels.filter(m => m.validated).length;
+
+                    return `
+                        <div class="bg-white rounded-2xl shadow-xs border border-slate-200/90 overflow-hidden">
+                            <!-- Cabeçalho do Grupo (Receita CLP) -->
+                            <div class="bg-slate-800 text-white px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div class="flex items-center gap-2.5 flex-wrap">
+                                    <span class="px-2.5 py-1 rounded-lg bg-cyan-500 text-slate-950 font-mono-tech font-extrabold text-xs">
+                                        RECEITA CLP ${pad2(clpId)}
+                                    </span>
+                                    <span class="font-bold text-sm text-white">
+                                        ${clpInfo.name ? escapeHtml(clpInfo.name) : '<span class="text-slate-400 italic font-normal">Sem descrição cadastrada</span>'}
+                                    </span>
+                                    ${clpInfo.notes ? `<span class="text-xs text-slate-400 hidden md:inline">• ${escapeHtml(clpInfo.notes)}</span>` : ''}
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[11px] font-mono-tech px-2.5 py-0.5 rounded-full bg-slate-700 text-slate-200">
+                                        ${groupModels.length} modelo(s) • ${validCount} validado(s)
+                                    </span>
+                                    <button onclick="openModelModalWithClp(${clpId})"
+                                        class="text-xs font-bold bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
+                                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Modelo nesta CLP
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Tabela dos Modelos dentro desta Receita CLP -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                                            <th class="py-2.5 px-4">1. Modelo CLP</th>
+                                            <th class="py-2.5 px-4">2. Receita CLP</th>
+                                            <th class="py-2.5 px-4">3. Receita Cola Atual</th>
+                                            <th class="py-2.5 px-4">4. Receita Cola Antiga (Histórico)</th>
+                                            <th class="py-2.5 px-4">5. Validado</th>
+                                            <th class="py-2.5 px-4 text-right">6. Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                        ${groupModels.map(m => buildModelTableRow(m)).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            lucide.createIcons();
+        }
+
+        // Edições Inline e Ações na Matriz
+        function inlineUpdateModel(modelId, field, value) {
+            const idx = state.models.findIndex(m => m.id === modelId);
+            if (idx === -1) return;
+            if (field === 'modelCode' && !String(value).trim()) {
+                showToast('O código do modelo não pode ficar vazio.', 'error');
+                renderMatrix();
+                return;
+            }
+
+            // Ao trocar a Receita Cola Atual para outra diferente, salva automaticamente a anterior no histórico
+            if (field === 'glueRecipeId') {
+                const previousGlueId = state.models[idx].glueRecipeId;
+                const newGlueId = Number(value);
+                if (previousGlueId && previousGlueId !== newGlueId) {
+                    state.models[idx].oldGlueRecipeId = previousGlueId;
+                }
+                state.models[idx].glueRecipeId = newGlueId;
+                saveState();
+                renderMatrix();
+                renderClpRecipes();
+                renderGlueRecipes();
+                showToast(`Receita Cola alterada para ${pad2(newGlueId)} (Cola ${pad2(previousGlueId)} salva no histórico)!`);
+                return;
+            }
+
+            state.models[idx][field] = typeof value === 'string' ? value.trim() : value;
+            saveState();
+            renderMatrix();
+            renderClpRecipes();
+            renderGlueRecipes();
+            showToast('Modelo atualizado!');
+        }
+
+        function restoreOldGlueRecipe(modelId) {
+            const idx = state.models.findIndex(m => m.id === modelId);
+            if (idx === -1) return;
+            const currentId = state.models[idx].glueRecipeId;
+            const oldId = Number(state.models[idx].oldGlueRecipeId);
+            if (!oldId) return;
+
+            state.models[idx].glueRecipeId = oldId;
+            state.models[idx].oldGlueRecipeId = currentId;
+            saveState();
+            renderMatrix();
+            renderGlueRecipes();
+            showToast(`Receita Cola ${pad2(oldId)} restaurada como Atual!`);
+        }
+
+        function toggleModelValidated(modelId) {
+            const m = state.models.find(item => item.id === modelId);
+            if (!m) return;
+            m.validated = !m.validated;
+            m.validatedAt = m.validated ? new Date().toLocaleDateString('pt-BR') : '';
+            saveState();
+            renderMatrix();
+            showToast(m.validated ? `Modelo ${m.modelCode} marcado como VALIDADO!` : `Modelo ${m.modelCode} alterado para PENDENTE.`);
+        }
+
+        function duplicateModel(modelId) {
+            const orig = state.models.find(m => m.id === modelId);
+            if (!orig) return;
+            const copy = {
+                ...orig,
+                id: 'm_' + Date.now(),
+                modelCode: `${orig.modelCode}-COPIA`,
+                validated: false,
+                validatedAt: ''
+            };
+            state.models.push(copy);
+            saveState();
+            refreshAllViews();
+            showToast(`Modelo duplicado na Receita CLP ${pad2(orig.clpRecipeId)}!`);
+        }
+
+        function deleteModel(modelId) {
+            state.models = state.models.filter(m => m.id !== modelId);
+            saveState();
+            refreshAllViews();
+            showToast('Modelo removido da matriz.');
+        }
+
+        // Modal de Modelo CLP
+        function openModelModal(modelId = null) {
+            const clpSel = document.getElementById('modelClpSelect');
+            clpSel.innerHTML = state.clpRecipes.map(r => 
+                `<option value="${r.id}">Receita CLP ${pad2(r.id)}${r.name ? ' - ' + r.name : ''}</option>`
+            ).join('');
+
+            const glueSel = document.getElementById('modelGlueSelect');
+            glueSel.innerHTML = state.glueRecipes.map(g => 
+                `<option value="${g.id}">Receita Cola ${pad2(g.id)}${g.name ? ' - ' + g.name : ''}</option>`
+            ).join('');
+
+            const oldGlueSel = document.getElementById('modelOldGlueSelect');
+            oldGlueSel.innerHTML = `<option value="">— Nenhuma / Sem histórico —</option>` +
+                state.glueRecipes.map(g => 
+                    `<option value="${g.id}">Receita Cola ${pad2(g.id)}${g.name ? ' - ' + g.name : ''}</option>`
+                ).join('');
+
+            if (modelId) {
+                const m = state.models.find(item => item.id === modelId);
+                if (!m) return;
+                document.getElementById('modelModalTitle').textContent = `Editar Modelo: ${m.modelCode}`;
+                document.getElementById('editModelId').value = m.id;
+                document.getElementById('modelCodeInput').value = m.modelCode;
+                clpSel.value = m.clpRecipeId;
+                glueSel.value = m.glueRecipeId;
+                oldGlueSel.value = m.oldGlueRecipeId ? String(m.oldGlueRecipeId) : '';
+                document.getElementById('modelNoteInput').value = m.note || '';
+                document.getElementById('modelValidatedInput').checked = m.validated;
+            } else {
+                document.getElementById('modelModalTitle').textContent = 'Cadastrar Novo Modelo CLP';
+                document.getElementById('editModelId').value = '';
+                document.getElementById('modelCodeInput').value = '';
+                clpSel.value = '1';
+                glueSel.value = '1';
+                oldGlueSel.value = '';
+                document.getElementById('modelNoteInput').value = '';
+                document.getElementById('modelValidatedInput').checked = false;
+            }
+
+            const modal = document.getElementById('modelModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function openModelModalWithClp(clpId) {
+            openModelModal(null);
+            document.getElementById('modelClpSelect').value = String(clpId);
+        }
+
+        function saveModelForm(e) {
+            e.preventDefault();
+            const id = document.getElementById('editModelId').value;
+            const modelCode = document.getElementById('modelCodeInput').value.trim();
+            const clpRecipeId = Number(document.getElementById('modelClpSelect').value);
+            const glueRecipeId = Number(document.getElementById('modelGlueSelect').value);
+            const oldGlueRaw = document.getElementById('modelOldGlueSelect').value;
+            const oldGlueRecipeId = oldGlueRaw ? Number(oldGlueRaw) : null;
+            const note = document.getElementById('modelNoteInput').value.trim();
+            const validated = document.getElementById('modelValidatedInput').checked;
+
+            if (id) {
+                const idx = state.models.findIndex(m => m.id === id);
+                if (idx !== -1) {
+                    const wasValidated = state.models[idx].validated;
+                    const prevGlue = state.models[idx].glueRecipeId;
+                    const finalOldGlue = (prevGlue !== glueRecipeId && oldGlueRecipeId === state.models[idx].oldGlueRecipeId)
+                        ? prevGlue
+                        : oldGlueRecipeId;
+
+                    state.models[idx] = {
+                        ...state.models[idx],
+                        modelCode,
+                        clpRecipeId,
+                        glueRecipeId,
+                        oldGlueRecipeId: finalOldGlue,
+                        note,
+                        validated,
+                        validatedAt: validated ? (wasValidated && state.models[idx].validatedAt ? state.models[idx].validatedAt : new Date().toLocaleDateString('pt-BR')) : ''
+                    };
+                }
+                showToast(`Modelo ${modelCode} atualizado!`);
+            } else {
+                state.models.push({
+                    id: 'm_' + Date.now(),
+                    modelCode,
+                    clpRecipeId,
+                    glueRecipeId,
+                    oldGlueRecipeId,
+                    note,
+                    validated,
+                    validatedAt: validated ? new Date().toLocaleDateString('pt-BR') : ''
+                });
+                showToast(`Modelo ${modelCode} cadastrado!`);
+            }
+
+            closeModal('modelModal');
+            saveState();
+            refreshAllViews();
+        }
+
+        // ==========================================
+        // ABA 2: PARÂMETROS DAS RECEITAS DE COLA (20)
+        // ==========================================
+        function isGlueRecipeModified(g) {
+            return Number(g.pressureBefore) !== Number(g.pressureCurrent) ||
+                   Number(g.doser1Before) !== Number(g.doser1Current) ||
+                   Number(g.doser2Before) !== Number(g.doser2Current) ||
+                   Number(g.flowBefore) !== Number(g.flowCurrent);
+        }
+
+        function buildParamComparisonBox(glueId, label, unit, beforeKey, currentKey, beforeVal, currentVal) {
+            const changed = Number(beforeVal) !== Number(currentVal);
+            return `
+                <div class="p-2.5 rounded-xl border transition ${changed ? 'bg-amber-50/70 border-amber-300' : 'bg-slate-50 border-slate-200/90'}">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[11px] font-extrabold uppercase tracking-wide ${changed ? 'text-amber-900' : 'text-slate-700'}">${label}</span>
+                        <span class="text-[10px] font-mono-tech text-slate-400">${unit}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <!-- ANTES -->
+                        <div>
+                            <label class="block text-[9px] font-bold uppercase text-slate-400 mb-0.5">Antes (Base)</label>
+                            <input type="number" step="0.1" value="${beforeVal}"
+                                onchange="updateGlueParam(${glueId}, '${beforeKey}', this.value)"
+                                class="w-full px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-mono-tech text-slate-600 focus:outline-none focus:border-cyan-600">
+                        </div>
+                        <!-- ATUAL -->
+                        <div>
+                            <label class="block text-[9px] font-bold uppercase ${changed ? 'text-amber-700' : 'text-cyan-700'} mb-0.5">
+                                Atual ${changed ? '●' : ''}
+                            </label>
+                            <input type="number" step="0.1" value="${currentVal}"
+                                onchange="updateGlueParam(${glueId}, '${currentKey}', this.value)"
+                                class="w-full px-2 py-1 bg-white border ${changed ? 'border-amber-400 font-extrabold text-amber-950' : 'border-cyan-300 font-bold text-slate-900'} rounded-lg text-xs font-mono-tech focus:outline-none focus:border-cyan-600">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGlueRecipes() {
+            const container = document.getElementById('glueRecipesContainer');
+            const search = (document.getElementById('glueSearchInput').value || '').toLowerCase().trim();
+
+            const list = state.glueRecipes.filter(g => {
+                if (!search) return true;
+                const linkedModels = state.models.filter(m => m.glueRecipeId === g.id).map(m => m.modelCode).join(' ');
+                const hay = `receita cola ${pad2(g.id)} ${g.name} ${linkedModels}`.toLowerCase();
+                return hay.includes(search);
+            });
+
+            container.innerHTML = list.map(g => {
+                const modified = isGlueRecipeModified(g);
+                const linkedModels = state.models.filter(m => m.glueRecipeId === g.id);
+
+                return `
+                    <div class="bg-white rounded-2xl shadow-xs border ${modified ? 'border-amber-300' : 'border-slate-200/90'} p-4 flex flex-col justify-between gap-3">
+                        <!-- Header do Card Receita Cola -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+                            <div class="flex items-center gap-2 flex-1">
+                                <span class="px-2.5 py-1 rounded-lg font-mono-tech font-extrabold text-xs shrink-0 ${modified ? 'bg-amber-500 text-slate-950' : 'bg-slate-900 text-white'}">
+                                    COLA ${pad2(g.id)}
+                                </span>
+                                <input type="text" value="${escapeHtml(g.name)}" placeholder="Descrição / Nome da Receita de Cola..."
+                                    onchange="updateGlueName(${g.id}, this.value)"
+                                    class="w-full text-xs sm:text-sm font-bold text-slate-800 bg-transparent hover:bg-slate-50 focus:bg-slate-50 px-2 py-1 rounded-lg border border-transparent hover:border-slate-200 focus:border-cyan-600 focus:outline-none">
+                            </div>
+
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                ${modified ? `
+                                    <button onclick="promoteGlueCurrentToBefore(${g.id})" title="Copiar valores ATUAIS para ANTES (Atualizar Baseline)"
+                                        class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg text-[11px] font-bold transition flex items-center gap-1">
+                                        <i data-lucide="arrow-left-right" class="w-3 h-3"></i>
+                                        Atual → Antes
+                                    </button>
+                                ` : `
+                                    <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                        Estável
+                                    </span>
+                                `}
+                            </div>
+                        </div>
+
+                        <!-- 4 Campos de Processo (3 Principais + 1 Fluxo) com ANTES vs ATUAL -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            ${buildParamComparisonBox(g.id, '1. Pressão Inicial', 'bar', 'pressureBefore', 'pressureCurrent', g.pressureBefore, g.pressureCurrent)}
+                            ${buildParamComparisonBox(g.id, '2. Dosador 1', '% / rpm', 'doser1Before', 'doser1Current', g.doser1Before, g.doser1Current)}
+                            ${buildParamComparisonBox(g.id, '3. Dosador 2', '% / rpm', 'doser2Before', 'doser2Current', g.doser2Before, g.doser2Current)}
+                            ${buildParamComparisonBox(g.id, '4. Fluxo', 'g/s', 'flowBefore', 'flowCurrent', g.flowBefore, g.flowCurrent)}
+                        </div>
+
+                        <!-- Rodapé: Modelos vinculados a esta Receita de Cola -->
+                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px]">
+                            <span class="text-slate-400 font-semibold shrink-0">Modelos usando Cola ${pad2(g.id)}:</span>
+                            <div class="flex flex-wrap gap-1 justify-end">
+                                ${linkedModels.length > 0
+                                    ? linkedModels.map(m => `<span class="font-mono-tech font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">${escapeHtml(m.modelCode)}</span>`).join('')
+                                    : '<span class="text-slate-400 italic">Nenhum modelo vinculado</span>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function updateGlueName(glueId, val) {
+            const g = state.glueRecipes.find(item => item.id === glueId);
+            if (!g) return;
+            g.name = val.trim();
+            saveState();
+            renderMatrix();
+            showToast(`Descrição da Receita Cola ${pad2(glueId)} salva!`);
+        }
+
+        function updateGlueParam(glueId, key, rawVal) {
+            const g = state.glueRecipes.find(item => item.id === glueId);
+            if (!g) return;
+            const num = parseFloat(rawVal);
+            g[key] = isNaN(num) ? 0 : num;
+            saveState();
+            renderGlueRecipes();
+            renderMatrix();
+            showToast(`Parâmetro da Receita Cola ${pad2(glueId)} atualizado!`);
+        }
+
+        function promoteGlueCurrentToBefore(glueId) {
+            const g = state.glueRecipes.find(item => item.id === glueId);
+            if (!g) return;
+            g.pressureBefore = g.pressureCurrent;
+            g.doser1Before = g.doser1Current;
+            g.doser2Before = g.doser2Current;
+            g.flowBefore = g.flowCurrent;
+            saveState();
+            renderGlueRecipes();
+            renderMatrix();
+            showToast(`Baseline (Antes) da Receita Cola ${pad2(glueId)} atualizado!`);
+        }
+
+        // ==========================================
+        // ABA 3: CATÁLOGO DE RECEITAS CLP (50)
+        // ==========================================
+        function renderClpRecipes() {
+            const tbody = document.getElementById('clpTableBody');
+            const search = (document.getElementById('clpSearchInput').value || '').toLowerCase().trim();
+            const onlyUsed = document.getElementById('clpOnlyUsedCheck').checked;
+
+            const filtered = state.clpRecipes.filter(r => {
+                const linkedModels = state.models.filter(m => m.clpRecipeId === r.id);
+                if (onlyUsed && linkedModels.length === 0) return false;
+                if (search) {
+                    const modelsText = linkedModels.map(m => m.modelCode).join(' ');
+                    const hay = `receita clp ${pad2(r.id)} ${r.name} ${r.notes} ${modelsText}`.toLowerCase();
+                    if (!hay.includes(search)) return false;
+                }
+                return true;
+            });
+
+            tbody.innerHTML = filtered.map(r => {
+                const linkedModels = state.models.filter(m => m.clpRecipeId === r.id);
+                return `
+                    <tr class="hover:bg-slate-50/90 transition">
+                        <td class="py-2.5 px-4 font-mono-tech font-extrabold text-cyan-800 whitespace-nowrap">
+                            CLP ${pad2(r.id)}
+                        </td>
+                        <td class="py-2.5 px-4">
+                            <input type="text" value="${escapeHtml(r.name)}" placeholder="Nome / Descrição da Receita CLP ${pad2(r.id)}..."
+                                onchange="updateClpField(${r.id}, 'name', this.value)"
+                                class="w-full px-2.5 py-1.5 bg-slate-50 hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-cyan-600 rounded-lg text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none transition">
+                        </td>
+                        <td class="py-2.5 px-4">
+                            <input type="text" value="${escapeHtml(r.notes)}" placeholder="Observações técnicas (ciclo, bico, linha)..."
+                                onchange="updateClpField(${r.id}, 'notes', this.value)"
+                                class="w-full px-2.5 py-1.5 bg-slate-50 hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-cyan-600 rounded-lg text-xs text-slate-600 focus:outline-none transition">
+                        </td>
+                        <td class="py-2.5 px-4 text-center">
+                            ${linkedModels.length > 0
+                                ? `<div class="inline-flex flex-wrap justify-center gap-1">
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-cyan-100 text-cyan-800">${linkedModels.length} modelo(s)</span>
+                                    <span class="text-[11px] font-mono-tech text-slate-500">(${linkedModels.map(m => m.modelCode).join(', ')})</span>
+                                   </div>`
+                                : `<span class="text-[11px] text-slate-400">Livre</span>`
+                            }
+                        </td>
+                        <td class="py-2.5 px-4 text-right whitespace-nowrap">
+                            <button onclick="openModelModalWithClp(${r.id})"
+                                class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-slate-100 hover:bg-cyan-600 text-slate-700 hover:text-white rounded-lg text-xs font-bold transition">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                <span>+ Modelo</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function updateClpField(clpId, field, value) {
+            const r = state.clpRecipes.find(item => item.id === clpId);
+            if (!r) return;
+            r[field] = value.trim();
+            saveState();
+            populateFilterDropdowns();
+            renderMatrix();
+            showToast(`Receita CLP ${pad2(clpId)} atualizada!`);
+        }
+
+        // ==========================================
+        // EXPORTAÇÃO CSV & BACKUP JSON
+        // ==========================================
+        function exportMatrixCSV() {
+            const filtered = getFilteredModels();
+            let csv = "data:text/csv;charset=utf-8,\uFEFF";
+            csv += "Modelo CLP;Receita CLP;Descricao Receita CLP;Receita Cola Atual;Descricao Receita Cola Atual;Receita Cola Antiga (Historico);Descricao Receita Cola Antiga;Pressao Inicial (Antes);Pressao Inicial (Atual);Dosador 1 (Antes);Dosador 1 (Atual);Dosador 2 (Antes);Dosador 2 (Atual);Fluxo (Antes);Fluxo (Atual);Status Validacao;Data Validacao;Observacao\n";
+
+            filtered.forEach(m => {
+                const clp = state.clpRecipes.find(c => c.id === m.clpRecipeId) || { name: '' };
+                const glue = state.glueRecipes.find(g => g.id === m.glueRecipeId) || {};
+                const oldGlue = m.oldGlueRecipeId ? (state.glueRecipes.find(g => g.id === Number(m.oldGlueRecipeId)) || {}) : null;
+                csv += [
+                    `"${m.modelCode}"`,
+                    `CLP ${pad2(m.clpRecipeId)}`,
+                    `"${clp.name || ''}"`,
+                    `Cola ${pad2(m.glueRecipeId)}`,
+                    `"${glue.name || ''}"`,
+                    m.oldGlueRecipeId ? `Cola ${pad2(m.oldGlueRecipeId)}` : '-',
+                    `"${oldGlue ? (oldGlue.name || '') : ''}"`,
+                    String(glue.pressureBefore ?? 0).replace('.', ','),
+                    String(glue.pressureCurrent ?? 0).replace('.', ','),
+                    String(glue.doser1Before ?? 0).replace('.', ','),
+                    String(glue.doser1Current ?? 0).replace('.', ','),
+                    String(glue.doser2Before ?? 0).replace('.', ','),
+                    String(glue.doser2Current ?? 0).replace('.', ','),
+                    String(glue.flowBefore ?? 0).replace('.', ','),
+                    String(glue.flowCurrent ?? 0).replace('.', ','),
+                    m.validated ? 'Validado' : 'Pendente',
+                    m.validatedAt || '-',
+                    `"${m.note || ''}"`
+                ].join(';') + "\n";
+            });
+
+            triggerDownload(encodeURI(csv), `Matriz_Modelos_CLP_Cola_${new Date().toISOString().slice(0, 10)}.csv`);
+            showToast('Matriz exportada para CSV!');
+        }
+
+        function exportGlueCSV() {
+            let csv = "data:text/csv;charset=utf-8,\uFEFF";
+            csv += "Receita Cola;Descricao;Pressao Inicial (Antes);Pressao Inicial (Atual);Dosador 1 (Antes);Dosador 1 (Atual);Dosador 2 (Antes);Dosador 2 (Atual);Fluxo (Antes);Fluxo (Atual)\n";
+
+            state.glueRecipes.forEach(g => {
+                csv += [
+                    `Cola ${pad2(g.id)}`,
+                    `"${g.name || ''}"`,
+                    String(g.pressureBefore).replace('.', ','),
+                    String(g.pressureCurrent).replace('.', ','),
+                    String(g.doser1Before).replace('.', ','),
+                    String(g.doser1Current).replace('.', ','),
+                    String(g.doser2Before).replace('.', ','),
+                    String(g.doser2Current).replace('.', ','),
+                    String(g.flowBefore).replace('.', ','),
+                    String(g.flowCurrent).replace('.', ',')
+                ].join(';') + "\n";
+            });
+
+            triggerDownload(encodeURI(csv), `Receitas_Cola_01_a_20_${new Date().toISOString().slice(0, 10)}.csv`);
+            showToast('Tabela das 20 Receitas de Cola exportada!');
+        }
+
+        function exportJSONBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            triggerDownload(dataStr, `Backup_Engenharia_CLP_Cola_${new Date().toISOString().slice(0, 10)}.json`);
+            showToast('Backup JSON completo exportado!');
+        }
+
+        function importJSONBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (!imported.models || !imported.clpRecipes || !imported.glueRecipes) {
+                        throw new Error('Estrutura JSON inválida.');
+                    }
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(imported));
+                    loadState();
+                    refreshAllViews();
+                    showToast('Backup JSON restaurado com sucesso!');
+                } catch (err) {
+                    showToast('Arquivo JSON inválido ou corrompido.', 'error');
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function triggerDownload(uri, filename) {
+            const link = document.createElement('a');
+            link.setAttribute('href', uri);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ==========================================
+        // MODAIS & RESET
+        // ==========================================
+        function openResetModal() {
+            const m = document.getElementById('resetModal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function restoreIndustrialSeed() {
+            seedRealisticIndustrialData();
+            closeModal('resetModal');
+            refreshAllViews();
+            showToast('Dados industriais de exemplo restaurados!');
+        }
+
+        function clearAllModelsAndReset() {
+            const { clp, glue } = createEmptyStructures();
+            state = { models: [], clpRecipes: clp, glueRecipes: glue };
+            saveState();
+            closeModal('resetModal');
+            refreshAllViews();
+            showToast('Todos os modelos foram limpos (50 CLP e 20 Cola zeradas).');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>
+```
